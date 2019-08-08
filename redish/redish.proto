@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package redish;
+
+service Redish {
+  // https://redis.io/commands
+  rpc get (Key) returns (SingleValue) {}
+  rpc set (SetRequest) returns (OK) {}
+  rpc getset (SetRequest) returns (SingleValue) {}
+}
+
+message Key {
+  string key = 1;
+}
+
+message SingleValue {
+  string value = 1;
+}
+
+message SetRequest {
+  string key = 1;
+  string value = 2;
+}
+
+message OK {}
