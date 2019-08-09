@@ -6,7 +6,6 @@ service Redish {
   // https://redis.io/commands
   rpc get (Key) returns (SingleValue) {}
   rpc set (SetRequest) returns (OK) {}
-  rpc getset (SetRequest) returns (SingleValue) {}
 }
 
 message Key {
