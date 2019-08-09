@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net"
 
@@ -35,7 +34,10 @@ func (s *redishServer) Get(ctx context.Context, key *pb.Key) (*pb.SingleValue, e
 
 func (s *redishServer) Set(ctx context.Context, sr *pb.SetRequest) (*pb.OK, error) {
 	log.Printf("SET %v \"%v\"", sr.Key, sr.Value)
-	return nil, fmt.Errorf("not yet implemented")
+	if err := s.engine.Set(sr.Key, sr.Value); err != nil {
+		return nil, err
+	}
+	return &pb.OK{}, nil
 }
 
 func main() {
