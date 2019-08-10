@@ -24,6 +24,36 @@ class RedishStub(object):
         request_serializer=redish__pb2.SetRequest.SerializeToString,
         response_deserializer=redish__pb2.OK.FromString,
         )
+    self.dele = channel.unary_unary(
+        '/redish.Redish/dele',
+        request_serializer=redish__pb2.KeyList.SerializeToString,
+        response_deserializer=redish__pb2.SingleValue.FromString,
+        )
+    self.incr = channel.unary_unary(
+        '/redish.Redish/incr',
+        request_serializer=redish__pb2.Key.SerializeToString,
+        response_deserializer=redish__pb2.SingleValue.FromString,
+        )
+    self.decr = channel.unary_unary(
+        '/redish.Redish/decr',
+        request_serializer=redish__pb2.Key.SerializeToString,
+        response_deserializer=redish__pb2.SingleValue.FromString,
+        )
+    self.incrby = channel.unary_unary(
+        '/redish.Redish/incrby',
+        request_serializer=redish__pb2.KeyValue.SerializeToString,
+        response_deserializer=redish__pb2.SingleValue.FromString,
+        )
+    self.decrby = channel.unary_unary(
+        '/redish.Redish/decrby',
+        request_serializer=redish__pb2.KeyValue.SerializeToString,
+        response_deserializer=redish__pb2.SingleValue.FromString,
+        )
+    self.strlen = channel.unary_unary(
+        '/redish.Redish/strlen',
+        request_serializer=redish__pb2.Key.SerializeToString,
+        response_deserializer=redish__pb2.SingleValue.FromString,
+        )
 
 
 class RedishServicer(object):
@@ -44,6 +74,48 @@ class RedishServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def dele(self, request, context):
+    """has to be dele not del because python del is a keyword
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def incr(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def decr(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def incrby(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def decrby(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def strlen(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_RedishServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -56,6 +128,36 @@ def add_RedishServicer_to_server(servicer, server):
           servicer.set,
           request_deserializer=redish__pb2.SetRequest.FromString,
           response_serializer=redish__pb2.OK.SerializeToString,
+      ),
+      'dele': grpc.unary_unary_rpc_method_handler(
+          servicer.dele,
+          request_deserializer=redish__pb2.KeyList.FromString,
+          response_serializer=redish__pb2.SingleValue.SerializeToString,
+      ),
+      'incr': grpc.unary_unary_rpc_method_handler(
+          servicer.incr,
+          request_deserializer=redish__pb2.Key.FromString,
+          response_serializer=redish__pb2.SingleValue.SerializeToString,
+      ),
+      'decr': grpc.unary_unary_rpc_method_handler(
+          servicer.decr,
+          request_deserializer=redish__pb2.Key.FromString,
+          response_serializer=redish__pb2.SingleValue.SerializeToString,
+      ),
+      'incrby': grpc.unary_unary_rpc_method_handler(
+          servicer.incrby,
+          request_deserializer=redish__pb2.KeyValue.FromString,
+          response_serializer=redish__pb2.SingleValue.SerializeToString,
+      ),
+      'decrby': grpc.unary_unary_rpc_method_handler(
+          servicer.decrby,
+          request_deserializer=redish__pb2.KeyValue.FromString,
+          response_serializer=redish__pb2.SingleValue.SerializeToString,
+      ),
+      'strlen': grpc.unary_unary_rpc_method_handler(
+          servicer.strlen,
+          request_deserializer=redish__pb2.Key.FromString,
+          response_serializer=redish__pb2.SingleValue.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

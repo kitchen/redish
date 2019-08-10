@@ -6,16 +6,41 @@ service Redish {
   // https://redis.io/commands
   rpc get (Key) returns (SingleValue) {}
   rpc set (SetRequest) returns (OK) {}
+  // has to be dele not del because python del is a keyword
+  rpc dele (KeyList) returns (SingleValue) {}
+  rpc incr (Key) returns (SingleValue) {}
+  rpc decr (Key) returns (SingleValue) {}
+  rpc incrby (KeyValue) returns (SingleValue) {}
+  rpc decrby (KeyValue) returns (SingleValue) {}
+  rpc strlen (Key) returns (SingleValue) {}
+  // getset probably should lock the key
+  // rpc getset (KeyValue) returns (SingleValue) {}
+  // rpc mget (KeyList) returns (stream SingleValue) {}
+  // rpc mset (KeyValueList) returns (OK) {}
 }
 
 message Key {
   string key = 1;
 }
 
+message KeyValue {
+  string key = 1;
+  string value = 2;
+}
+
+message KeyList {
+  repeated Key keys = 1;
+}
+
+message KeyValueList {
+  repeated KeyValue pairs = 1;
+}
+
 message SingleValue {
   string value = 1;
 }
 
+// distinct from KeyValue because redis SET command has more features that this doesn't support yet
 message SetRequest {
   string key = 1;
   string value = 2;

@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='redish',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0credish.proto\x12\x06redish\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\t\"\x1c\n\x0bSingleValue\x12\r\n\x05value\x18\x01 \x01(\t\"(\n\nSetRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x04\n\x02OK2\\\n\x06Redish\x12)\n\x03get\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\'\n\x03set\x12\x12.redish.SetRequest\x1a\n.redish.OK\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x0credish.proto\x12\x06redish\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\t\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"$\n\x07KeyList\x12\x19\n\x04keys\x18\x01 \x03(\x0b\x32\x0b.redish.Key\"/\n\x0cKeyValueList\x12\x1f\n\x05pairs\x18\x01 \x03(\x0b\x32\x10.redish.KeyValue\"\x1c\n\x0bSingleValue\x12\r\n\x05value\x18\x01 \x01(\t\"(\n\nSetRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x04\n\x02OK2\xf8\x02\n\x06Redish\x12)\n\x03get\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\'\n\x03set\x12\x12.redish.SetRequest\x1a\n.redish.OK\"\x00\x12.\n\x04\x64\x65le\x12\x0f.redish.KeyList\x1a\x13.redish.SingleValue\"\x00\x12*\n\x04incr\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12*\n\x04\x64\x65\x63r\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\x31\n\x06incrby\x12\x10.redish.KeyValue\x1a\x13.redish.SingleValue\"\x00\x12\x31\n\x06\x64\x65\x63rby\x12\x10.redish.KeyValue\x1a\x13.redish.SingleValue\"\x00\x12,\n\x06strlen\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x62\x06proto3')
 )
 
 
@@ -57,6 +57,106 @@ _KEY = _descriptor.Descriptor(
 )
 
 
+_KEYVALUE = _descriptor.Descriptor(
+  name='KeyValue',
+  full_name='redish.KeyValue',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='redish.KeyValue.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='redish.KeyValue.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=44,
+  serialized_end=82,
+)
+
+
+_KEYLIST = _descriptor.Descriptor(
+  name='KeyList',
+  full_name='redish.KeyList',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='keys', full_name='redish.KeyList.keys', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=84,
+  serialized_end=120,
+)
+
+
+_KEYVALUELIST = _descriptor.Descriptor(
+  name='KeyValueList',
+  full_name='redish.KeyValueList',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='pairs', full_name='redish.KeyValueList.pairs', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=122,
+  serialized_end=169,
+)
+
+
 _SINGLEVALUE = _descriptor.Descriptor(
   name='SingleValue',
   full_name='redish.SingleValue',
@@ -83,8 +183,8 @@ _SINGLEVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=44,
-  serialized_end=72,
+  serialized_start=171,
+  serialized_end=199,
 )
 
 
@@ -121,8 +221,8 @@ _SETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=74,
-  serialized_end=114,
+  serialized_start=201,
+  serialized_end=241,
 )
 
 
@@ -145,11 +245,16 @@ _OK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=116,
-  serialized_end=120,
+  serialized_start=243,
+  serialized_end=247,
 )
 
+_KEYLIST.fields_by_name['keys'].message_type = _KEY
+_KEYVALUELIST.fields_by_name['pairs'].message_type = _KEYVALUE
 DESCRIPTOR.message_types_by_name['Key'] = _KEY
+DESCRIPTOR.message_types_by_name['KeyValue'] = _KEYVALUE
+DESCRIPTOR.message_types_by_name['KeyList'] = _KEYLIST
+DESCRIPTOR.message_types_by_name['KeyValueList'] = _KEYVALUELIST
 DESCRIPTOR.message_types_by_name['SingleValue'] = _SINGLEVALUE
 DESCRIPTOR.message_types_by_name['SetRequest'] = _SETREQUEST
 DESCRIPTOR.message_types_by_name['OK'] = _OK
@@ -161,6 +266,27 @@ Key = _reflection.GeneratedProtocolMessageType('Key', (_message.Message,), {
   # @@protoc_insertion_point(class_scope:redish.Key)
   })
 _sym_db.RegisterMessage(Key)
+
+KeyValue = _reflection.GeneratedProtocolMessageType('KeyValue', (_message.Message,), {
+  'DESCRIPTOR' : _KEYVALUE,
+  '__module__' : 'redish_pb2'
+  # @@protoc_insertion_point(class_scope:redish.KeyValue)
+  })
+_sym_db.RegisterMessage(KeyValue)
+
+KeyList = _reflection.GeneratedProtocolMessageType('KeyList', (_message.Message,), {
+  'DESCRIPTOR' : _KEYLIST,
+  '__module__' : 'redish_pb2'
+  # @@protoc_insertion_point(class_scope:redish.KeyList)
+  })
+_sym_db.RegisterMessage(KeyList)
+
+KeyValueList = _reflection.GeneratedProtocolMessageType('KeyValueList', (_message.Message,), {
+  'DESCRIPTOR' : _KEYVALUELIST,
+  '__module__' : 'redish_pb2'
+  # @@protoc_insertion_point(class_scope:redish.KeyValueList)
+  })
+_sym_db.RegisterMessage(KeyValueList)
 
 SingleValue = _reflection.GeneratedProtocolMessageType('SingleValue', (_message.Message,), {
   'DESCRIPTOR' : _SINGLEVALUE,
@@ -191,8 +317,8 @@ _REDISH = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=122,
-  serialized_end=214,
+  serialized_start=250,
+  serialized_end=626,
   methods=[
   _descriptor.MethodDescriptor(
     name='get',
@@ -210,6 +336,60 @@ _REDISH = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_SETREQUEST,
     output_type=_OK,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='dele',
+    full_name='redish.Redish.dele',
+    index=2,
+    containing_service=None,
+    input_type=_KEYLIST,
+    output_type=_SINGLEVALUE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='incr',
+    full_name='redish.Redish.incr',
+    index=3,
+    containing_service=None,
+    input_type=_KEY,
+    output_type=_SINGLEVALUE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='decr',
+    full_name='redish.Redish.decr',
+    index=4,
+    containing_service=None,
+    input_type=_KEY,
+    output_type=_SINGLEVALUE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='incrby',
+    full_name='redish.Redish.incrby',
+    index=5,
+    containing_service=None,
+    input_type=_KEYVALUE,
+    output_type=_SINGLEVALUE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='decrby',
+    full_name='redish.Redish.decrby',
+    index=6,
+    containing_service=None,
+    input_type=_KEYVALUE,
+    output_type=_SINGLEVALUE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='strlen',
+    full_name='redish.Redish.strlen',
+    index=7,
+    containing_service=None,
+    input_type=_KEY,
+    output_type=_SINGLEVALUE,
     serialized_options=None,
   ),
 ])

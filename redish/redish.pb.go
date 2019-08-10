@@ -63,6 +63,131 @@ func (m *Key) GetKey() string {
 	return ""
 }
 
+type KeyValue struct {
+	Key                  string   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value                string   `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *KeyValue) Reset()         { *m = KeyValue{} }
+func (m *KeyValue) String() string { return proto.CompactTextString(m) }
+func (*KeyValue) ProtoMessage()    {}
+func (*KeyValue) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d30173c04f457c8e, []int{1}
+}
+
+func (m *KeyValue) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_KeyValue.Unmarshal(m, b)
+}
+func (m *KeyValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_KeyValue.Marshal(b, m, deterministic)
+}
+func (m *KeyValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_KeyValue.Merge(m, src)
+}
+func (m *KeyValue) XXX_Size() int {
+	return xxx_messageInfo_KeyValue.Size(m)
+}
+func (m *KeyValue) XXX_DiscardUnknown() {
+	xxx_messageInfo_KeyValue.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_KeyValue proto.InternalMessageInfo
+
+func (m *KeyValue) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+func (m *KeyValue) GetValue() string {
+	if m != nil {
+		return m.Value
+	}
+	return ""
+}
+
+type KeyList struct {
+	Keys                 []*Key   `protobuf:"bytes,1,rep,name=keys,proto3" json:"keys,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *KeyList) Reset()         { *m = KeyList{} }
+func (m *KeyList) String() string { return proto.CompactTextString(m) }
+func (*KeyList) ProtoMessage()    {}
+func (*KeyList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d30173c04f457c8e, []int{2}
+}
+
+func (m *KeyList) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_KeyList.Unmarshal(m, b)
+}
+func (m *KeyList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_KeyList.Marshal(b, m, deterministic)
+}
+func (m *KeyList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_KeyList.Merge(m, src)
+}
+func (m *KeyList) XXX_Size() int {
+	return xxx_messageInfo_KeyList.Size(m)
+}
+func (m *KeyList) XXX_DiscardUnknown() {
+	xxx_messageInfo_KeyList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_KeyList proto.InternalMessageInfo
+
+func (m *KeyList) GetKeys() []*Key {
+	if m != nil {
+		return m.Keys
+	}
+	return nil
+}
+
+type KeyValueList struct {
+	Pairs                []*KeyValue `protobuf:"bytes,1,rep,name=pairs,proto3" json:"pairs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *KeyValueList) Reset()         { *m = KeyValueList{} }
+func (m *KeyValueList) String() string { return proto.CompactTextString(m) }
+func (*KeyValueList) ProtoMessage()    {}
+func (*KeyValueList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d30173c04f457c8e, []int{3}
+}
+
+func (m *KeyValueList) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_KeyValueList.Unmarshal(m, b)
+}
+func (m *KeyValueList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_KeyValueList.Marshal(b, m, deterministic)
+}
+func (m *KeyValueList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_KeyValueList.Merge(m, src)
+}
+func (m *KeyValueList) XXX_Size() int {
+	return xxx_messageInfo_KeyValueList.Size(m)
+}
+func (m *KeyValueList) XXX_DiscardUnknown() {
+	xxx_messageInfo_KeyValueList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_KeyValueList proto.InternalMessageInfo
+
+func (m *KeyValueList) GetPairs() []*KeyValue {
+	if m != nil {
+		return m.Pairs
+	}
+	return nil
+}
+
 type SingleValue struct {
 	Value                string   `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -74,7 +199,7 @@ func (m *SingleValue) Reset()         { *m = SingleValue{} }
 func (m *SingleValue) String() string { return proto.CompactTextString(m) }
 func (*SingleValue) ProtoMessage()    {}
 func (*SingleValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d30173c04f457c8e, []int{1}
+	return fileDescriptor_d30173c04f457c8e, []int{4}
 }
 
 func (m *SingleValue) XXX_Unmarshal(b []byte) error {
@@ -102,6 +227,7 @@ func (m *SingleValue) GetValue() string {
 	return ""
 }
 
+// distinct from KeyValue because redis SET command has more features that this doesn't support yet
 type SetRequest struct {
 	Key                  string   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	Value                string   `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
@@ -114,7 +240,7 @@ func (m *SetRequest) Reset()         { *m = SetRequest{} }
 func (m *SetRequest) String() string { return proto.CompactTextString(m) }
 func (*SetRequest) ProtoMessage()    {}
 func (*SetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d30173c04f457c8e, []int{2}
+	return fileDescriptor_d30173c04f457c8e, []int{5}
 }
 
 func (m *SetRequest) XXX_Unmarshal(b []byte) error {
@@ -159,7 +285,7 @@ func (m *OK) Reset()         { *m = OK{} }
 func (m *OK) String() string { return proto.CompactTextString(m) }
 func (*OK) ProtoMessage()    {}
 func (*OK) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d30173c04f457c8e, []int{3}
+	return fileDescriptor_d30173c04f457c8e, []int{6}
 }
 
 func (m *OK) XXX_Unmarshal(b []byte) error {
@@ -182,6 +308,9 @@ var xxx_messageInfo_OK proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*Key)(nil), "redish.Key")
+	proto.RegisterType((*KeyValue)(nil), "redish.KeyValue")
+	proto.RegisterType((*KeyList)(nil), "redish.KeyList")
+	proto.RegisterType((*KeyValueList)(nil), "redish.KeyValueList")
 	proto.RegisterType((*SingleValue)(nil), "redish.SingleValue")
 	proto.RegisterType((*SetRequest)(nil), "redish.SetRequest")
 	proto.RegisterType((*OK)(nil), "redish.OK")
@@ -190,18 +319,26 @@ func init() {
 func init() { proto.RegisterFile("redish.proto", fileDescriptor_d30173c04f457c8e) }
 
 var fileDescriptor_d30173c04f457c8e = []byte{
-	// 173 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x29, 0x4a, 0x4d, 0xc9,
-	0x2c, 0xce, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x83, 0xf0, 0x94, 0xc4, 0xb9, 0x98,
-	0xbd, 0x53, 0x2b, 0x85, 0x04, 0xb8, 0x98, 0xb3, 0x53, 0x2b, 0x25, 0x18, 0x15, 0x18, 0x35, 0x38,
-	0x83, 0x40, 0x4c, 0x25, 0x65, 0x2e, 0xee, 0xe0, 0xcc, 0xbc, 0xf4, 0x9c, 0xd4, 0xb0, 0xc4, 0x9c,
-	0xd2, 0x54, 0x21, 0x11, 0x2e, 0xd6, 0x32, 0x10, 0x03, 0xaa, 0x04, 0xc2, 0x51, 0x32, 0xe1, 0xe2,
-	0x0a, 0x4e, 0x2d, 0x09, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e, 0xc1, 0x34, 0x04, 0xa1, 0x8b, 0x09,
-	0x59, 0x17, 0x0b, 0x17, 0x93, 0xbf, 0xb7, 0x51, 0x0c, 0x17, 0x5b, 0x10, 0xd8, 0x0d, 0x42, 0x9a,
-	0x5c, 0xcc, 0xe9, 0xa9, 0x25, 0x42, 0xdc, 0x7a, 0x50, 0x17, 0x7a, 0xa7, 0x56, 0x4a, 0x09, 0xc3,
-	0x38, 0x48, 0x8e, 0x50, 0x62, 0x10, 0x52, 0xe7, 0x62, 0x2e, 0x4e, 0x2d, 0x11, 0x12, 0x82, 0xcb,
-	0xc2, 0x6d, 0x97, 0xe2, 0x82, 0x89, 0xf9, 0x7b, 0x2b, 0x31, 0x24, 0xb1, 0x81, 0xbd, 0x69, 0x0c,
-	0x08, 0x00, 0x00, 0xff, 0xff, 0x6a, 0x8c, 0x44, 0x66, 0xf6, 0x00, 0x00, 0x00,
+	// 291 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xdf, 0x4a, 0xf3, 0x40,
+	0x10, 0xc5, 0x9b, 0x3f, 0xcd, 0xf7, 0x39, 0x29, 0x58, 0x46, 0xc1, 0xd0, 0x1b, 0xcb, 0x0a, 0x5a,
+	0x83, 0x04, 0x8c, 0xe2, 0x4b, 0xac, 0x50, 0x48, 0xc1, 0xfb, 0xd6, 0x0e, 0x35, 0x34, 0xa4, 0x75,
+	0x77, 0x2b, 0xec, 0x9b, 0x7b, 0x29, 0xbb, 0x31, 0x61, 0xa1, 0x28, 0xf1, 0x6e, 0x67, 0xce, 0x9c,
+	0x33, 0x3f, 0x86, 0x85, 0x91, 0xa0, 0x75, 0x29, 0xdf, 0xb2, 0xbd, 0xd8, 0xa9, 0x1d, 0x46, 0x4d,
+	0xc5, 0x2e, 0x20, 0xe0, 0xa4, 0x71, 0x0c, 0xc1, 0x96, 0x74, 0xe2, 0x4d, 0xbd, 0xd9, 0x49, 0x61,
+	0x9e, 0x2c, 0x87, 0xff, 0x9c, 0xf4, 0xcb, 0xb2, 0x3a, 0xd0, 0xb1, 0x8a, 0xe7, 0x30, 0xfc, 0x30,
+	0x52, 0xe2, 0xdb, 0x5e, 0x53, 0xb0, 0x14, 0xfe, 0x71, 0xd2, 0xcf, 0xa5, 0x54, 0x78, 0x09, 0xe1,
+	0x96, 0xb4, 0x4c, 0xbc, 0x69, 0x30, 0x8b, 0xf3, 0x38, 0xfb, 0x5e, 0xce, 0x49, 0x17, 0x56, 0x60,
+	0x4f, 0x30, 0x6a, 0xf3, 0xad, 0xe1, 0x1a, 0x86, 0xfb, 0x65, 0x29, 0x5a, 0xc7, 0xd8, 0x71, 0xd8,
+	0xa1, 0xa2, 0x91, 0xd9, 0x15, 0xc4, 0x8b, 0xb2, 0xde, 0x54, 0xd4, 0xa0, 0x75, 0x20, 0x9e, 0x0b,
+	0xf2, 0x08, 0xb0, 0x20, 0x55, 0xd0, 0xfb, 0x81, 0xa4, 0xea, 0x8d, 0x1f, 0x82, 0x3f, 0xe7, 0xf9,
+	0xa7, 0x0f, 0x51, 0x61, 0x77, 0xe3, 0x2d, 0x04, 0x1b, 0x52, 0xe8, 0xd2, 0x4f, 0xce, 0xda, 0xc2,
+	0xa1, 0x60, 0x03, 0xbc, 0x81, 0x40, 0x92, 0x42, 0xec, 0xd4, 0x6e, 0xfd, 0x04, 0xda, 0xde, 0x9c,
+	0xb3, 0x01, 0x66, 0x10, 0xae, 0xa9, 0x22, 0x3c, 0x75, 0x42, 0xcd, 0x01, 0x7e, 0x0a, 0x4e, 0x21,
+	0x2c, 0xeb, 0x57, 0xd1, 0x0b, 0x22, 0x35, 0xd9, 0x3d, 0x67, 0xef, 0x21, 0x32, 0xb9, 0x2b, 0x8d,
+	0x47, 0xa7, 0xfe, 0xc5, 0x62, 0xe2, 0xff, 0x62, 0xb9, 0x83, 0x48, 0x2a, 0x51, 0x51, 0xdd, 0x87,
+	0x69, 0x15, 0xd9, 0xbf, 0xf9, 0xf0, 0x15, 0x00, 0x00, 0xff, 0xff, 0xf9, 0x45, 0xcf, 0x4a, 0xab,
+	0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -219,6 +356,13 @@ type RedishClient interface {
 	// https://redis.io/commands
 	Get(ctx context.Context, in *Key, opts ...grpc.CallOption) (*SingleValue, error)
 	Set(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*OK, error)
+	// has to be dele not del because python del is a keyword
+	Dele(ctx context.Context, in *KeyList, opts ...grpc.CallOption) (*SingleValue, error)
+	Incr(ctx context.Context, in *Key, opts ...grpc.CallOption) (*SingleValue, error)
+	Decr(ctx context.Context, in *Key, opts ...grpc.CallOption) (*SingleValue, error)
+	Incrby(ctx context.Context, in *KeyValue, opts ...grpc.CallOption) (*SingleValue, error)
+	Decrby(ctx context.Context, in *KeyValue, opts ...grpc.CallOption) (*SingleValue, error)
+	Strlen(ctx context.Context, in *Key, opts ...grpc.CallOption) (*SingleValue, error)
 }
 
 type redishClient struct {
@@ -247,11 +391,72 @@ func (c *redishClient) Set(ctx context.Context, in *SetRequest, opts ...grpc.Cal
 	return out, nil
 }
 
+func (c *redishClient) Dele(ctx context.Context, in *KeyList, opts ...grpc.CallOption) (*SingleValue, error) {
+	out := new(SingleValue)
+	err := c.cc.Invoke(ctx, "/redish.Redish/dele", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *redishClient) Incr(ctx context.Context, in *Key, opts ...grpc.CallOption) (*SingleValue, error) {
+	out := new(SingleValue)
+	err := c.cc.Invoke(ctx, "/redish.Redish/incr", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *redishClient) Decr(ctx context.Context, in *Key, opts ...grpc.CallOption) (*SingleValue, error) {
+	out := new(SingleValue)
+	err := c.cc.Invoke(ctx, "/redish.Redish/decr", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *redishClient) Incrby(ctx context.Context, in *KeyValue, opts ...grpc.CallOption) (*SingleValue, error) {
+	out := new(SingleValue)
+	err := c.cc.Invoke(ctx, "/redish.Redish/incrby", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *redishClient) Decrby(ctx context.Context, in *KeyValue, opts ...grpc.CallOption) (*SingleValue, error) {
+	out := new(SingleValue)
+	err := c.cc.Invoke(ctx, "/redish.Redish/decrby", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *redishClient) Strlen(ctx context.Context, in *Key, opts ...grpc.CallOption) (*SingleValue, error) {
+	out := new(SingleValue)
+	err := c.cc.Invoke(ctx, "/redish.Redish/strlen", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RedishServer is the server API for Redish service.
 type RedishServer interface {
 	// https://redis.io/commands
 	Get(context.Context, *Key) (*SingleValue, error)
 	Set(context.Context, *SetRequest) (*OK, error)
+	// has to be dele not del because python del is a keyword
+	Dele(context.Context, *KeyList) (*SingleValue, error)
+	Incr(context.Context, *Key) (*SingleValue, error)
+	Decr(context.Context, *Key) (*SingleValue, error)
+	Incrby(context.Context, *KeyValue) (*SingleValue, error)
+	Decrby(context.Context, *KeyValue) (*SingleValue, error)
+	Strlen(context.Context, *Key) (*SingleValue, error)
 }
 
 // UnimplementedRedishServer can be embedded to have forward compatible implementations.
@@ -263,6 +468,24 @@ func (*UnimplementedRedishServer) Get(ctx context.Context, req *Key) (*SingleVal
 }
 func (*UnimplementedRedishServer) Set(ctx context.Context, req *SetRequest) (*OK, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
+}
+func (*UnimplementedRedishServer) Dele(ctx context.Context, req *KeyList) (*SingleValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Dele not implemented")
+}
+func (*UnimplementedRedishServer) Incr(ctx context.Context, req *Key) (*SingleValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Incr not implemented")
+}
+func (*UnimplementedRedishServer) Decr(ctx context.Context, req *Key) (*SingleValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Decr not implemented")
+}
+func (*UnimplementedRedishServer) Incrby(ctx context.Context, req *KeyValue) (*SingleValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Incrby not implemented")
+}
+func (*UnimplementedRedishServer) Decrby(ctx context.Context, req *KeyValue) (*SingleValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Decrby not implemented")
+}
+func (*UnimplementedRedishServer) Strlen(ctx context.Context, req *Key) (*SingleValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Strlen not implemented")
 }
 
 func RegisterRedishServer(s *grpc.Server, srv RedishServer) {
@@ -305,6 +528,114 @@ func _Redish_Set_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Redish_Dele_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KeyList)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RedishServer).Dele(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/redish.Redish/Dele",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RedishServer).Dele(ctx, req.(*KeyList))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Redish_Incr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Key)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RedishServer).Incr(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/redish.Redish/Incr",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RedishServer).Incr(ctx, req.(*Key))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Redish_Decr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Key)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RedishServer).Decr(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/redish.Redish/Decr",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RedishServer).Decr(ctx, req.(*Key))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Redish_Incrby_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KeyValue)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RedishServer).Incrby(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/redish.Redish/Incrby",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RedishServer).Incrby(ctx, req.(*KeyValue))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Redish_Decrby_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KeyValue)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RedishServer).Decrby(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/redish.Redish/Decrby",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RedishServer).Decrby(ctx, req.(*KeyValue))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Redish_Strlen_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Key)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RedishServer).Strlen(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/redish.Redish/Strlen",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RedishServer).Strlen(ctx, req.(*Key))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Redish_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "redish.Redish",
 	HandlerType: (*RedishServer)(nil),
@@ -316,6 +647,30 @@ var _Redish_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "set",
 			Handler:    _Redish_Set_Handler,
+		},
+		{
+			MethodName: "dele",
+			Handler:    _Redish_Dele_Handler,
+		},
+		{
+			MethodName: "incr",
+			Handler:    _Redish_Incr_Handler,
+		},
+		{
+			MethodName: "decr",
+			Handler:    _Redish_Decr_Handler,
+		},
+		{
+			MethodName: "incrby",
+			Handler:    _Redish_Incrby_Handler,
+		},
+		{
+			MethodName: "decrby",
+			Handler:    _Redish_Decrby_Handler,
+		},
+		{
+			MethodName: "strlen",
+			Handler:    _Redish_Strlen_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

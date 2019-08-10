@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
@@ -12,6 +13,7 @@ import (
 
 type redishServer struct {
 	engine *engine.Engine
+	pb.UnimplementedRedishServer
 }
 
 func newServer() *redishServer {
@@ -38,6 +40,26 @@ func (s *redishServer) Set(ctx context.Context, sr *pb.SetRequest) (*pb.OK, erro
 		return nil, err
 	}
 	return &pb.OK{}, nil
+}
+
+func (s *redishServer) Dele(ctx context.Context, keys *pb.KeyList) (*pb.SingleValue, error) {
+	log.Printf("DELE %v", keys)
+	keyStrings := make([]string, len(keys.Keys))
+	for i, key := range keys.Keys {
+		keyStrings[i] = key.Key
+	}
+	deleted, err := s.engine.Del(keyStrings)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.SingleValue{Value: fmt.Sprintf("%d", deleted)}, nil
+}
+
+func (s *redishServer) Incr(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
+	log.Printf("INCR %v", key.Key)
+
+	value, err := s.engine.Incr(key.Key)
+	return &pb.SingleValue{Value: fmt.Sprintf("%d", *value)}, err
 }
 
 func main() {
