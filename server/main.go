@@ -12,7 +12,7 @@ import (
 )
 
 type redishServer struct {
-	engine *engine.Engine
+	engine engine.Engine
 	pb.UnimplementedRedishServer
 }
 
@@ -59,14 +59,14 @@ func (s *redishServer) Incr(ctx context.Context, key *pb.Key) (*pb.SingleValue, 
 	log.Printf("INCR %v", key.Key)
 
 	value, err := s.engine.Incr(key.Key)
-	return &pb.SingleValue{Value: fmt.Sprintf("%d", *value)}, err
+	return &pb.SingleValue{Value: value}, err
 }
 
 func (s *redishServer) Decr(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
 	log.Printf("DECR %v", key.Key)
 
 	value, err := s.engine.Decr(key.Key)
-	return &pb.SingleValue{Value: fmt.Sprintf("%d", *value)}, err
+	return &pb.SingleValue{Value: value}, err
 }
 
 func main() {
