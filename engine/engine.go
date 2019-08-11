@@ -5,9 +5,6 @@ import (
 	"strconv"
 )
 
-// TODO: convert this to an interface and make Engine struct be engine and unexported
-// https://stackoverflow.com/questions/37135193/how-to-set-default-values-in-go-structs
-// this forces users to use the NewEngine() method which sets default values and such
 type engine struct {
 	storage map[string]valueStoreInterface
 }
