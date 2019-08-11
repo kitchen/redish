@@ -1,7 +1,11 @@
 package engine
 
-import "testing"
-import "github.com/stretchr/testify/assert"
+import (
+	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestStringValue(t *testing.T) {
 	stringValue := "abc"
@@ -41,7 +45,23 @@ func TestIntValue(t *testing.T) {
 }
 
 func TestStringToIntAndBackAndForth(t *testing.T) {
+	intValue := int64(123)
+	stringValue := "abc"
+	s := valueStore{intValue: &intValue}
+	assert.Nil(t, s.stringValue)
+	assert.Equal(t, int64(123), *s.intValue)
 
+	s.set(stringValue)
+	assert.Nil(t, s.intValue)
+	assert.Equal(t, stringValue, *s.stringValue)
+
+	s = valueStore{stringValue: &stringValue}
+	assert.Nil(t, s.intValue)
+	assert.Equal(t, stringValue, *s.stringValue)
+
+	s.set(fmt.Sprintf("%d", intValue))
+	assert.Nil(t, s.stringValue)
+	assert.Equal(t, intValue, *s.intValue)
 }
 
 func TestIncrDecrIntValues(t *testing.T) {
@@ -68,5 +88,14 @@ func TestIncrDecrIntValues(t *testing.T) {
 }
 
 func TestIncrDecrStringValue(t *testing.T) {
+	stringValue := "abc"
+	s := valueStore{stringValue: &stringValue}
 
+	assert.Equal(t, "abc", *s.stringValue)
+
+	_, err := s.incr()
+	assert.Error(t, err)
+
+	_, err = s.decr()
+	assert.Error(t, err)
 }

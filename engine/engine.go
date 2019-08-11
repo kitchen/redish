@@ -82,15 +82,15 @@ func (v *valueStore) set(value string) error {
 }
 
 // TODO: should probably lock the db
-func (engine *Engine) Del(keys []string) (int, error) {
-	deleted := 0
+func (engine *Engine) Del(keys []string) (*int64, error) {
+	deleted := int64(0)
 	for _, key := range keys {
 		if _, ok := engine.storage[key]; ok {
 			delete(engine.storage, key)
 			deleted += 1
 		}
 	}
-	return deleted, nil
+	return &deleted, nil
 }
 
 func (engine *Engine) Incr(key string) (*int64, error) {
