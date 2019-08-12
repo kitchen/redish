@@ -21,6 +21,7 @@ type Engine interface {
 	Strlen(key string) (string, error)
 	GetSet(key string, value string) (*string, error)
 	MGet(keys []string) ([]*string, error)
+	MSet(kvs map[string]string) error
 }
 
 func NewEngine() Engine {
@@ -158,4 +159,12 @@ func (engine *engine) MGet(keys []string) ([]*string, error) {
 		}
 	}
 	return values, nil
+}
+
+func (engine *engine) MSet(kvs map[string]string) error {
+	for k, v := range kvs {
+		engine.set(k, v)
+	}
+
+	return nil
 }

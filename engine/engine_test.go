@@ -146,3 +146,23 @@ func TestMGet(t *testing.T) {
 
 	// TODO: test what happens when mget with an invalid data type (e.g. fakeValueStore)
 }
+
+func TestMSet(t *testing.T) {
+	engine := NewEngine()
+
+	kvs := map[string]string{
+		"foo": "aoeuhtns",
+		"bar": "123",
+	}
+
+	err := engine.MSet(kvs)
+	assert.NoError(t, err)
+
+	value, err := engine.Get("foo")
+	assert.NoError(t, err)
+	assert.Equal(t, "aoeuhtns", *value)
+
+	value, err = engine.Get("bar")
+	assert.NoError(t, err)
+	assert.Equal(t, "123", *value)
+}
