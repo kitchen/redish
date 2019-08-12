@@ -76,7 +76,7 @@ func (engine *engine) Del(keys []string) (int64, error) {
 	deleted := int64(0)
 	for _, key := range keys {
 		if engine.del(key) {
-			deleted += 1
+			deleted++
 		}
 	}
 	return deleted, nil
@@ -94,7 +94,7 @@ func (engine *engine) Exists(keys []string) (int64, error) {
 	exists := int64(0)
 	for _, key := range keys {
 		if store := engine.getStore(key); store != nil {
-			exists += 1
+			exists++
 		}
 	}
 	return exists, nil
@@ -133,14 +133,15 @@ func (engine *engine) Strlen(key string) (string, error) {
 	if store == nil {
 		return "0", nil
 	}
-	if value, err := store.get(); err == nil {
+
+	value, err := store.get()
+	if err == nil {
 		return fmt.Sprintf("%d", len(value)), nil
-	} else {
-		return "", err
 	}
+	return "", err
 }
 
-func (engine *engine) GetSet(key string, value string) (*string, error) {
+func (engine *engine) GetSet(key string, newValue string) (*string, error) {
 	store := engine.getStore(key)
 	var oldValue *string
 	if store == nil {
@@ -152,7 +153,7 @@ func (engine *engine) GetSet(key string, value string) (*string, error) {
 		}
 		oldValue = &value
 	}
-	engine.set(key, value)
+	engine.set(key, newValue)
 	return oldValue, nil
 }
 
