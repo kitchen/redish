@@ -11,8 +11,8 @@ service Redish {
   rpc exists (KeyList) returns (IntValue) {}
   rpc incr (Key) returns (IntValue) {}
   rpc decr (Key) returns (IntValue) {}
-  rpc incrby (KeyValue) returns (IntValue) {}
-  rpc decrby (KeyValue) returns (IntValue) {}
+  rpc incrby (KeyIntValue) returns (IntValue) {}
+  rpc decrby (KeyIntValue) returns (IntValue) {}
   rpc strlen (Key) returns (IntValue) {}
   rpc getset (KeyValue) returns (SingleValue) {}
   rpc mget (KeyList) returns (ValueList) {}
@@ -43,6 +43,11 @@ message SingleValue {
 
 message IntValue {
   sint64 value = 1;
+}
+
+message KeyIntValue {
+  string key = 1;
+  sint64 value = 2;
 }
 
 message ValueList {

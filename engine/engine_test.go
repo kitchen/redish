@@ -162,7 +162,7 @@ func (suite *engineTestSuite) TestIntIncrDecr() {
 	suite.Equal(int64(2), value)
 
 	// TODO: make Incrby and Decrby use int64 instead of string? :|
-	value, err = suite.engine.Incrby("intvalue", "10")
+	value, err = suite.engine.Incrby("intvalue", int64(10))
 	suite.NoError(err)
 	suite.Equal(int64(12), value)
 
@@ -170,7 +170,7 @@ func (suite *engineTestSuite) TestIntIncrDecr() {
 	suite.NoError(err)
 	suite.Equal(int64(11), value)
 
-	value, err = suite.engine.Decrby("intvalue", "100")
+	value, err = suite.engine.Decrby("intvalue", int64(100))
 	suite.NoError(err)
 	suite.Equal(int64(-89), value)
 
@@ -178,7 +178,7 @@ func (suite *engineTestSuite) TestIntIncrDecr() {
 	suite.NoError(err)
 	suite.Equal(int64(1), value)
 
-	value, err = suite.engine.Incrby("incrby", "10")
+	value, err = suite.engine.Incrby("incrby", int64(10))
 	suite.NoError(err)
 	suite.Equal(int64(10), value)
 
@@ -186,7 +186,7 @@ func (suite *engineTestSuite) TestIntIncrDecr() {
 	suite.NoError(err)
 	suite.Equal(int64(-1), value)
 
-	value, err = suite.engine.Decrby("decrby", "10")
+	value, err = suite.engine.Decrby("decrby", int64(10))
 	suite.NoError(err)
 	suite.Equal(int64(-10), value)
 }
@@ -195,25 +195,19 @@ func (suite *engineTestSuite) TestOtherIncrDecr() {
 	_, err := suite.engine.Incr(stringValueKey)
 	suite.Error(err)
 
-	_, err = suite.engine.Incrby(stringValueKey, "10")
+	_, err = suite.engine.Incrby(stringValueKey, int64(10))
 	suite.Error(err)
 
 	_, err = suite.engine.Decr(stringValueKey)
 	suite.Error(err)
 
-	_, err = suite.engine.Decrby(stringValueKey, "10")
+	_, err = suite.engine.Decrby(stringValueKey, int64(10))
 	suite.Error(err)
 
 	// make sure we haven't modified the string value anywhere in there
 	value, err := suite.engine.Get(stringValueKey)
 	suite.NoError(err)
 	suite.Equal(stringValue, *value)
-
-	_, err = suite.engine.Incrby(intValueKey, "invalidint")
-	suite.Error(err)
-
-	_, err = suite.engine.Decrby(intValueKey, "anotherinvalidint")
-	suite.Error(err)
 
 	// make sure we haven't modified the int value anywhere in there
 	value, err = suite.engine.Get(intValueKey)
@@ -226,13 +220,13 @@ func (suite *engineTestSuite) TestOtherIncrDecr() {
 	// TODO: there's some subtlety here in whether the string parsing fails or
 	// the key is of the wrong type (string, fakevalue, etc) that could use some assertions
 	// but right now we're not sending specific error types so we'll ignore it
-	_, err = suite.engine.Incrby(fakeValueKey, "10")
+	_, err = suite.engine.Incrby(fakeValueKey, int64(10))
 	suite.Error(err)
 
 	_, err = suite.engine.Decr(fakeValueKey)
 	suite.Error(err)
 
-	_, err = suite.engine.Decrby(fakeValueKey, "10")
+	_, err = suite.engine.Decrby(fakeValueKey, int64(10))
 	suite.Error(err)
 
 	typeString, err := suite.engine.Type(fakeValueKey)

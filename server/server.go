@@ -79,18 +79,19 @@ func (s *redishServer) Decr(ctx context.Context, key *pb.Key) (*pb.IntValue, err
 	return &pb.IntValue{Value: value}, err
 }
 
-func (s *redishServer) Incrby(ctx context.Context, keyvalue *pb.KeyValue) (*pb.IntValue, error) {
-	log.Printf("INCRBY %v %v", keyvalue.Key, keyvalue.Value)
-	if value, err := s.engine.Incrby(keyvalue.Key, keyvalue.Value); err == nil {
+func (s *redishServer) Incrby(ctx context.Context, kv *pb.KeyIntValue) (*pb.IntValue, error) {
+	log.Printf("INCRBY %v %v", kv.Key, kv.Value)
+	if value, err := s.engine.Incrby(kv.Key, kv.Value); err == nil {
 		return &pb.IntValue{Value: value}, err
 	} else {
 		return nil, err
 	}
 }
 
-func (s *redishServer) Decrby(ctx context.Context, keyvalue *pb.KeyValue) (*pb.IntValue, error) {
-	log.Printf("DECRBY %v %v", keyvalue.Key, keyvalue.Value)
-	if value, err := s.engine.Decrby(keyvalue.Key, keyvalue.Value); err == nil {
+func (s *redishServer) Decrby(ctx context.Context, kv *pb.KeyIntValue) (*pb.IntValue, error) {
+	log.Printf("DECRBY %v %v", kv.Key, kv.Value)
+
+	if value, err := s.engine.Decrby(kv.Key, kv.Value); err == nil {
 		return &pb.IntValue{Value: value}, err
 	} else {
 		return nil, err

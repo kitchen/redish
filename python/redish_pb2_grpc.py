@@ -46,12 +46,12 @@ class RedishStub(object):
         )
     self.incrby = channel.unary_unary(
         '/redish.Redish/incrby',
-        request_serializer=redish__pb2.KeyValue.SerializeToString,
+        request_serializer=redish__pb2.KeyIntValue.SerializeToString,
         response_deserializer=redish__pb2.IntValue.FromString,
         )
     self.decrby = channel.unary_unary(
         '/redish.Redish/decrby',
-        request_serializer=redish__pb2.KeyValue.SerializeToString,
+        request_serializer=redish__pb2.KeyIntValue.SerializeToString,
         response_deserializer=redish__pb2.IntValue.FromString,
         )
     self.strlen = channel.unary_unary(
@@ -211,12 +211,12 @@ def add_RedishServicer_to_server(servicer, server):
       ),
       'incrby': grpc.unary_unary_rpc_method_handler(
           servicer.incrby,
-          request_deserializer=redish__pb2.KeyValue.FromString,
+          request_deserializer=redish__pb2.KeyIntValue.FromString,
           response_serializer=redish__pb2.IntValue.SerializeToString,
       ),
       'decrby': grpc.unary_unary_rpc_method_handler(
           servicer.decrby,
-          request_deserializer=redish__pb2.KeyValue.FromString,
+          request_deserializer=redish__pb2.KeyIntValue.FromString,
           response_serializer=redish__pb2.IntValue.SerializeToString,
       ),
       'strlen': grpc.unary_unary_rpc_method_handler(

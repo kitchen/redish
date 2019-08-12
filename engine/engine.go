@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -16,8 +15,8 @@ type Engine interface {
 	Exists(keys []string) (int64, error)
 	Incr(key string) (int64, error)
 	Decr(key string) (int64, error)
-	Incrby(key string, by string) (int64, error)
-	Decrby(key string, by string) (int64, error)
+	Incrby(key string, by int64) (int64, error)
+	Decrby(key string, by int64) (int64, error)
 	Strlen(key string) (int64, error)
 	GetSet(key string, value string) (*string, error)
 	MGet(keys []string) ([]*string, error)
@@ -111,21 +110,14 @@ func (engine *engine) Decr(key string) (int64, error) {
 	return store.incrby(-1)
 }
 
-func (engine *engine) Incrby(key string, by string) (int64, error) {
-	if intValue, err := strconv.ParseInt(by, 10, 64); err == nil {
-		store := engine.getOrDefault(key, "0")
-		return store.incrby(intValue)
-	}
-	return 0, fmt.Errorf("ERR value is not an integer or out of range")
-
+func (engine *engine) Incrby(key string, by int64) (int64, error) {
+	store := engine.getOrDefault(key, "0")
+	return store.incrby(by)
 }
 
-func (engine *engine) Decrby(key string, by string) (int64, error) {
-	if intValue, err := strconv.ParseInt(by, 10, 64); err == nil {
-		store := engine.getOrDefault(key, "0")
-		return store.incrby(-intValue)
-	}
-	return 0, fmt.Errorf("ERR value is not an integer or out of range")
+func (engine *engine) Decrby(key string, by int64) (int64, error) {
+	store := engine.getOrDefault(key, "0")
+	return store.incrby(-by)
 }
 
 func (engine *engine) Strlen(key string) (int64, error) {
