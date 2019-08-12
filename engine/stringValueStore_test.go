@@ -12,12 +12,13 @@ type stringValueStoreTestSuite struct {
 	store       stringValueStore
 }
 
-func (suite *stringValueStoreTestSuite) SetupTests() {
+func (suite *stringValueStoreTestSuite) SetupTest() {
 	suite.stringValue = "abc"
 	suite.store = stringValueStore{stringValue: suite.stringValue}
 }
 
 func (suite *stringValueStoreTestSuite) TestGet() {
+	suite.Equal("abc", suite.stringValue)
 	suite.Equal(suite.stringValue, suite.store.stringValue)
 	stringValue, err := suite.store.get()
 	suite.Equal(suite.stringValue, stringValue)
