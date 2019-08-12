@@ -14,15 +14,15 @@ type Engine interface {
 	Set(key string, value string) error
 	Del(keys []string) (int64, error)
 	Exists(keys []string) (int64, error)
-	Incr(key string) (string, error)
-	Decr(key string) (string, error)
-	Incrby(key string, by string) (string, error)
-	Decrby(key string, by string) (string, error)
-	Strlen(key string) (string, error)
+	Incr(key string) (int64, error)
+	Decr(key string) (int64, error)
+	Incrby(key string, by string) (int64, error)
+	Decrby(key string, by string) (int64, error)
+	Strlen(key string) (int64, error)
 	GetSet(key string, value string) (*string, error)
 	MGet(keys []string) ([]*string, error)
 	MSet(kvs map[string]string) error
-	Type(key string) string
+	Type(key string) (string, error)
 }
 
 func NewEngine() Engine {
@@ -100,45 +100,45 @@ func (engine *engine) Exists(keys []string) (int64, error) {
 	return exists, nil
 }
 
-func (engine *engine) Incr(key string) (string, error) {
+func (engine *engine) Incr(key string) (int64, error) {
 	store := engine.getOrDefault(key, "0")
 
 	return store.incrby(1)
 }
 
-func (engine *engine) Decr(key string) (string, error) {
+func (engine *engine) Decr(key string) (int64, error) {
 	store := engine.getOrDefault(key, "0")
 	return store.incrby(-1)
 }
 
-func (engine *engine) Incrby(key string, by string) (string, error) {
+func (engine *engine) Incrby(key string, by string) (int64, error) {
 	if intValue, err := strconv.ParseInt(by, 10, 64); err == nil {
 		store := engine.getOrDefault(key, "0")
 		return store.incrby(intValue)
 	}
-	return "", fmt.Errorf("ERR value is not an integer or out of range")
+	return 0, fmt.Errorf("ERR value is not an integer or out of range")
 
 }
 
-func (engine *engine) Decrby(key string, by string) (string, error) {
+func (engine *engine) Decrby(key string, by string) (int64, error) {
 	if intValue, err := strconv.ParseInt(by, 10, 64); err == nil {
 		store := engine.getOrDefault(key, "0")
 		return store.incrby(-intValue)
 	}
-	return "", fmt.Errorf("ERR value is not an integer or out of range")
+	return 0, fmt.Errorf("ERR value is not an integer or out of range")
 }
 
-func (engine *engine) Strlen(key string) (string, error) {
+func (engine *engine) Strlen(key string) (int64, error) {
 	store := engine.getStore(key)
 	if store == nil {
-		return "0", nil
+		return 0, nil
 	}
 
 	value, err := store.get()
 	if err == nil {
-		return fmt.Sprintf("%d", len(value)), nil
+		return int64(len(value)), nil
 	}
-	return "", err
+	return 0, err
 }
 
 func (engine *engine) GetSet(key string, newValue string) (*string, error) {
@@ -181,9 +181,9 @@ func (engine *engine) MSet(kvs map[string]string) error {
 	return nil
 }
 
-func (engine *engine) Type(key string) string {
+func (engine *engine) Type(key string) (string, error) {
 	if store := engine.getStore(key); store != nil {
-		return store.getType()
+		return store.getType(), nil
 	}
-	return "none"
+	return "none", nil
 }

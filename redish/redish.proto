@@ -7,13 +7,13 @@ service Redish {
   rpc get (Key) returns (SingleValue) {}
   rpc set (SetRequest) returns (OK) {}
   // has to be dele not del because python del is a keyword
-  rpc dele (KeyList) returns (SingleValue) {}
-  rpc exists (KeyList) returns (SingleValue) {}
-  rpc incr (Key) returns (SingleValue) {}
-  rpc decr (Key) returns (SingleValue) {}
-  rpc incrby (KeyValue) returns (SingleValue) {}
-  rpc decrby (KeyValue) returns (SingleValue) {}
-  rpc strlen (Key) returns (SingleValue) {}
+  rpc dele (KeyList) returns (IntValue) {}
+  rpc exists (KeyList) returns (IntValue) {}
+  rpc incr (Key) returns (IntValue) {}
+  rpc decr (Key) returns (IntValue) {}
+  rpc incrby (KeyValue) returns (IntValue) {}
+  rpc decrby (KeyValue) returns (IntValue) {}
+  rpc strlen (Key) returns (IntValue) {}
   rpc getset (KeyValue) returns (SingleValue) {}
   rpc mget (KeyList) returns (ValueList) {}
   rpc mset (KeyValueList) returns (OK) {}
@@ -39,6 +39,10 @@ message KeyValueList {
 
 message SingleValue {
   string value = 1;
+}
+
+message IntValue {
+  sint64 value = 1;
 }
 
 message ValueList {

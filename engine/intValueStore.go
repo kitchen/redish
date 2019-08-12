@@ -13,9 +13,9 @@ func (s *intValueStore) get() (string, error) {
 	return fmt.Sprintf("%d", s.intValue), nil
 }
 
-func (s *intValueStore) incrby(by int64) (string, error) {
+func (s *intValueStore) incrby(by int64) (int64, error) {
 	s.intValue += by
-	return s.get()
+	return s.intValue, nil
 }
 
 func (s *intValueStore) getType() string {

@@ -27,37 +27,37 @@ class RedishStub(object):
     self.dele = channel.unary_unary(
         '/redish.Redish/dele',
         request_serializer=redish__pb2.KeyList.SerializeToString,
-        response_deserializer=redish__pb2.SingleValue.FromString,
+        response_deserializer=redish__pb2.IntValue.FromString,
         )
     self.exists = channel.unary_unary(
         '/redish.Redish/exists',
         request_serializer=redish__pb2.KeyList.SerializeToString,
-        response_deserializer=redish__pb2.SingleValue.FromString,
+        response_deserializer=redish__pb2.IntValue.FromString,
         )
     self.incr = channel.unary_unary(
         '/redish.Redish/incr',
         request_serializer=redish__pb2.Key.SerializeToString,
-        response_deserializer=redish__pb2.SingleValue.FromString,
+        response_deserializer=redish__pb2.IntValue.FromString,
         )
     self.decr = channel.unary_unary(
         '/redish.Redish/decr',
         request_serializer=redish__pb2.Key.SerializeToString,
-        response_deserializer=redish__pb2.SingleValue.FromString,
+        response_deserializer=redish__pb2.IntValue.FromString,
         )
     self.incrby = channel.unary_unary(
         '/redish.Redish/incrby',
         request_serializer=redish__pb2.KeyValue.SerializeToString,
-        response_deserializer=redish__pb2.SingleValue.FromString,
+        response_deserializer=redish__pb2.IntValue.FromString,
         )
     self.decrby = channel.unary_unary(
         '/redish.Redish/decrby',
         request_serializer=redish__pb2.KeyValue.SerializeToString,
-        response_deserializer=redish__pb2.SingleValue.FromString,
+        response_deserializer=redish__pb2.IntValue.FromString,
         )
     self.strlen = channel.unary_unary(
         '/redish.Redish/strlen',
         request_serializer=redish__pb2.Key.SerializeToString,
-        response_deserializer=redish__pb2.SingleValue.FromString,
+        response_deserializer=redish__pb2.IntValue.FromString,
         )
     self.getset = channel.unary_unary(
         '/redish.Redish/getset',
@@ -192,37 +192,37 @@ def add_RedishServicer_to_server(servicer, server):
       'dele': grpc.unary_unary_rpc_method_handler(
           servicer.dele,
           request_deserializer=redish__pb2.KeyList.FromString,
-          response_serializer=redish__pb2.SingleValue.SerializeToString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
       ),
       'exists': grpc.unary_unary_rpc_method_handler(
           servicer.exists,
           request_deserializer=redish__pb2.KeyList.FromString,
-          response_serializer=redish__pb2.SingleValue.SerializeToString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
       ),
       'incr': grpc.unary_unary_rpc_method_handler(
           servicer.incr,
           request_deserializer=redish__pb2.Key.FromString,
-          response_serializer=redish__pb2.SingleValue.SerializeToString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
       ),
       'decr': grpc.unary_unary_rpc_method_handler(
           servicer.decr,
           request_deserializer=redish__pb2.Key.FromString,
-          response_serializer=redish__pb2.SingleValue.SerializeToString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
       ),
       'incrby': grpc.unary_unary_rpc_method_handler(
           servicer.incrby,
           request_deserializer=redish__pb2.KeyValue.FromString,
-          response_serializer=redish__pb2.SingleValue.SerializeToString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
       ),
       'decrby': grpc.unary_unary_rpc_method_handler(
           servicer.decrby,
           request_deserializer=redish__pb2.KeyValue.FromString,
-          response_serializer=redish__pb2.SingleValue.SerializeToString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
       ),
       'strlen': grpc.unary_unary_rpc_method_handler(
           servicer.strlen,
           request_deserializer=redish__pb2.Key.FromString,
-          response_serializer=redish__pb2.SingleValue.SerializeToString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
       ),
       'getset': grpc.unary_unary_rpc_method_handler(
           servicer.getset,

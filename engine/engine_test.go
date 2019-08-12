@@ -20,35 +20,35 @@ func TestNewEngine(t *testing.T) {
 func TestEngineIncr(t *testing.T) {
 	engine := newEngine()
 	value, err := engine.Incr("abc")
-	assert.Equal(t, "1", value)
+	assert.Equal(t, int64(1), value)
 	assert.NoError(t, err)
 
 	value, err = engine.Incr("abc")
-	assert.Equal(t, "2", value)
+	assert.Equal(t, int64(2), value)
 	assert.NoError(t, err)
 
 	value, err = engine.Decr("def")
-	assert.Equal(t, "-1", value)
+	assert.Equal(t, int64(-1), value)
 	assert.NoError(t, err)
 
 	value, err = engine.Decr("def")
-	assert.Equal(t, "-2", value)
+	assert.Equal(t, int64(-2), value)
 	assert.NoError(t, err)
 
 	value, err = engine.Incrby("foo", "10")
-	assert.Equal(t, "10", value)
+	assert.Equal(t, int64(10), value)
 	assert.NoError(t, err)
 
 	value, err = engine.Incrby("foo", "10")
-	assert.Equal(t, "20", value)
+	assert.Equal(t, int64(20), value)
 	assert.NoError(t, err)
 
 	value, err = engine.Decrby("bar", "10")
-	assert.Equal(t, "-10", value)
+	assert.Equal(t, int64(-10), value)
 	assert.NoError(t, err)
 
 	value, err = engine.Decrby("bar", "10")
-	assert.Equal(t, "-20", value)
+	assert.Equal(t, int64(-20), value)
 	assert.NoError(t, err)
 
 	_, err = engine.Incrby("aoeuhtns", "aoeuhtns")
@@ -132,15 +132,15 @@ func TestStrLen(t *testing.T) {
 	engine.Set("stringvalue", "aoeuhtns")
 	value, err := engine.Strlen("stringvalue")
 	assert.NoError(t, err)
-	assert.Equal(t, "8", value)
+	assert.Equal(t, int64(8), value)
 
 	engine.Set("intvalue", "1234567890")
 	value, err = engine.Strlen("intvalue")
 	assert.NoError(t, err)
-	assert.Equal(t, "10", value)
+	assert.Equal(t, int64(10), value)
 
 	value, err = engine.Strlen("doesnotexist")
-	assert.Equal(t, "0", value)
+	assert.Equal(t, int64(0), value)
 	assert.NoError(t, err)
 
 	// TODO: test what happens when strlen on an invalid data type (e.g. fakeValueStore)
@@ -195,10 +195,17 @@ func TestMSet(t *testing.T) {
 func TestType(t *testing.T) {
 	engine := newEngine()
 	engine.Set("stringvalue", "abc")
-	assert.Equal(t, "string", engine.Type("stringvalue"))
+
+	typeString, err := engine.Type("stringvalue")
+	assert.Equal(t, "string", typeString)
+	assert.NoError(t, err)
 
 	engine.Set("intvalue", "123")
-	assert.Equal(t, "string", engine.Type("intvalue"))
+	typeString, err = engine.Type("intvalue")
+	assert.Equal(t, "string", typeString)
+	assert.NoError(t, err)
 
-	assert.Equal(t, "none", engine.Type("doesnotexist"))
+	typeString, err = engine.Type("doesnotexist")
+	assert.Equal(t, "none", typeString)
+	assert.NoError(t, err)
 }
