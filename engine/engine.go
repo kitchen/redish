@@ -61,8 +61,7 @@ func (engine *engine) set(key string, value string) valueStoreInterface {
 }
 
 func (engine *engine) getOrDefault(key string, defaultValue string) valueStoreInterface {
-	store := engine.getStore(key)
-	if store != nil {
+	if store := engine.getStore(key); store != nil {
 		return store
 	}
 	return engine.set(key, defaultValue)
@@ -72,18 +71,25 @@ func (engine *engine) getOrDefault(key string, defaultValue string) valueStoreIn
 func (engine *engine) Del(keys []string) (int64, error) {
 	deleted := int64(0)
 	for _, key := range keys {
-		if _, ok := engine.storage[key]; ok {
-			delete(engine.storage, key)
+		if engine.del(key) {
 			deleted += 1
 		}
 	}
 	return deleted, nil
 }
 
+func (engine *engine) del(key string) bool {
+	if _, ok := engine.storage[key]; ok {
+		delete(engine.storage, key)
+		return true
+	}
+	return false
+}
+
 func (engine *engine) Exists(keys []string) (int64, error) {
 	exists := int64(0)
 	for _, key := range keys {
-		if _, ok := engine.storage[key]; ok {
+		if store := engine.getStore(key); store != nil {
 			exists += 1
 		}
 	}
