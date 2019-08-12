@@ -10,10 +10,6 @@ type fakeValueStore struct {
 	valueStore
 }
 
-func (engine *engine) setFakeValue(key string) {
-	engine.storage[key] = &fakeValueStore{}
-}
-
 func (s *fakeValueStore) getType() string {
 	return "fake"
 }

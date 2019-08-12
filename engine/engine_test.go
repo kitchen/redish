@@ -3,6 +3,10 @@ package engine
 import "testing"
 import "github.com/stretchr/testify/assert"
 
+func (engine *engine) setFakeValue(key string) {
+	engine.storage[key] = &fakeValueStore{}
+}
+
 func TestNewEngine(t *testing.T) {
 	var bigEngine Engine
 	bigEngine = NewEngine()
