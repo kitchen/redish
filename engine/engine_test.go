@@ -7,6 +7,14 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+const stringValue = "foobartestvaluehtnsaoeu"
+const stringValueKey = "stringvaluekey"
+const intValue = 12345678901
+const intValueString = "12345678901"
+const intValueKey = "intvaluekey"
+const fakeValueKey = "fakevaluekey"
+const doesNotExistKey = "doesnotexistkey"
+
 func (engine *engine) setFakeValue(key string) {
 	engine.storage[key] = &fakeValueStore{}
 }
@@ -19,9 +27,9 @@ type engineTestSuite struct {
 func (suite *engineTestSuite) SetupTest() {
 	suite.engine = *newEngine()
 	// TODO: turn all of these strings into constants
-	suite.engine.Set("intvalue", "1234567890")
-	suite.engine.Set("stringvalue", "foobartestvalueaoeuhtns")
-	suite.engine.setFakeValue("fakevalue")
+	suite.engine.Set(intValueKey, intValueString)
+	suite.engine.Set(stringValueKey, stringValue)
+	suite.engine.setFakeValue(fakeValueKey)
 }
 
 func (suite *engineTestSuite) TestNewEngine() {
@@ -35,9 +43,9 @@ func (suite *engineTestSuite) TestNewEngine() {
 }
 
 func (suite *engineTestSuite) TestGetSetStringValues() {
-	value, err := suite.engine.Get("stringvalue")
+	value, err := suite.engine.Get(stringValueKey)
 	suite.NoError(err)
-	suite.Equal("foobartestvalueaoeuhtns", *value)
+	suite.Equal(stringValue, *value)
 
 	err = suite.engine.Set("key", "abc")
 	suite.NoError(err)
@@ -48,9 +56,9 @@ func (suite *engineTestSuite) TestGetSetStringValues() {
 }
 
 func (suite *engineTestSuite) TestGetSetIntValues() {
-	value, err := suite.engine.Get("intvalue")
+	value, err := suite.engine.Get(intValueKey)
 	suite.NoError(err)
-	suite.Equal("1234567890", *value)
+	suite.Equal(intValueString, *value)
 
 	err = suite.engine.Set("key", "123")
 	suite.NoError(err)
@@ -61,88 +69,88 @@ func (suite *engineTestSuite) TestGetSetIntValues() {
 }
 
 func (suite *engineTestSuite) TestGetOtherValues() {
-	value, err := suite.engine.Get("doesnotexist")
+	value, err := suite.engine.Get(doesNotExistKey)
 	suite.NoError(err)
 	suite.Nil(value)
 
-	_, err = suite.engine.Get("fakevalue")
+	_, err = suite.engine.Get(fakeValueKey)
 	suite.Error(err)
 }
 
 func (suite *engineTestSuite) TestGetSetMethod() {
-	value, err := suite.engine.GetSet("intvalue", "9876")
+	value, err := suite.engine.GetSet(intValueKey, "9876")
 	suite.NoError(err)
-	suite.Equal("1234567890", *value)
+	suite.Equal(intValueString, *value)
 
-	value, err = suite.engine.Get("intvalue")
+	value, err = suite.engine.Get(intValueKey)
 	suite.NoError(err)
 	suite.Equal("9876", *value)
 
-	value, err = suite.engine.GetSet("stringvalue", "abc123")
+	value, err = suite.engine.GetSet(stringValueKey, "abc123")
 	suite.NoError(err)
-	suite.Equal("foobartestvalueaoeuhtns", *value)
+	suite.Equal(stringValue, *value)
 
-	value, err = suite.engine.Get("stringvalue")
+	value, err = suite.engine.Get(stringValueKey)
 	suite.NoError(err)
 	suite.Equal("abc123", *value)
 
-	value, err = suite.engine.GetSet("doesnotexist", "it does now")
+	value, err = suite.engine.GetSet(doesNotExistKey, "it does now")
 	suite.NoError(err)
 	suite.Nil(value)
 
-	value, err = suite.engine.Get("doesnotexist")
+	value, err = suite.engine.Get(doesNotExistKey)
 	suite.NoError(err)
 	suite.Equal("it does now", *value)
 
-	_, err = suite.engine.GetSet("fakevalue", "fake fake fake")
+	_, err = suite.engine.GetSet(fakeValueKey, "fake fake fake")
 	suite.Error(err)
 
-	_, err = suite.engine.Get("fakevalue")
+	_, err = suite.engine.Get(fakeValueKey)
 	suite.Error(err)
 
-	typeString, err := suite.engine.Type("fakevalue")
+	typeString, err := suite.engine.Type(fakeValueKey)
 	suite.NoError(err)
 	suite.Equal("fake", typeString)
 }
 
 func (suite *engineTestSuite) TestDel() {
-	deleted, err := suite.engine.Del([]string{"stringvalue", "intvalue", "doesnotexist"})
+	deleted, err := suite.engine.Del([]string{stringValueKey, intValueKey, doesNotExistKey})
 	suite.NoError(err)
 	suite.Equal(int64(2), deleted)
 
-	value, err := suite.engine.Get("stringvalue")
+	value, err := suite.engine.Get(stringValueKey)
 	suite.NoError(err)
 	suite.Nil(value)
 
-	value, err = suite.engine.Get("intvalue")
+	value, err = suite.engine.Get(intValueKey)
 	suite.NoError(err)
 	suite.Nil(value)
 
-	value, err = suite.engine.Get("doesnotexist")
+	value, err = suite.engine.Get(doesNotExistKey)
 	suite.NoError(err)
 	suite.Nil(value)
 }
 
 func (suite *engineTestSuite) TestExists() {
-	exists, err := suite.engine.Exists([]string{"stringvalue", "intvalue", "doesnotexist"})
+	exists, err := suite.engine.Exists([]string{stringValueKey, intValueKey, doesNotExistKey})
 	suite.NoError(err)
 	suite.Equal(int64(2), exists)
 }
 
 func (suite *engineTestSuite) TestStrLen() {
-	length, err := suite.engine.Strlen("stringvalue")
+	length, err := suite.engine.Strlen(stringValueKey)
 	suite.NoError(err)
-	suite.Equal(int64(23), length)
+	suite.Equal(int64(len(stringValue)), length)
 
-	length, err = suite.engine.Strlen("intvalue")
+	length, err = suite.engine.Strlen(intValueKey)
 	suite.NoError(err)
-	suite.Equal(int64(10), length)
+	suite.Equal(int64(len(intValueString)), length)
 
-	length, err = suite.engine.Strlen("doesnotexist")
+	length, err = suite.engine.Strlen(doesNotExistKey)
 	suite.NoError(err)
 	suite.Equal(int64(0), length)
 
-	_, err = suite.engine.Strlen("fakevalue")
+	_, err = suite.engine.Strlen(fakeValueKey)
 	suite.Error(err)
 }
 
@@ -185,48 +193,52 @@ func (suite *engineTestSuite) TestIntIncrDecr() {
 }
 
 func (suite *engineTestSuite) TestOtherIncrDecr() {
-	_, err := suite.engine.Incr("stringvalue")
+	_, err := suite.engine.Incr(stringValueKey)
 	suite.Error(err)
 
-	_, err = suite.engine.Incrby("stringvalue", "10")
+	_, err = suite.engine.Incrby(stringValueKey, "10")
 	suite.Error(err)
 
-	_, err = suite.engine.Decr("stringvalue")
+	_, err = suite.engine.Decr(stringValueKey)
 	suite.Error(err)
 
-	_, err = suite.engine.Decrby("stringvalue", "10")
+	_, err = suite.engine.Decrby(stringValueKey, "10")
 	suite.Error(err)
 
 	// make sure we haven't modified the string value anywhere in there
-	value, err := suite.engine.Get("stringvalue")
+	value, err := suite.engine.Get(stringValueKey)
 	suite.NoError(err)
-	suite.Equal("foobartestvalueaoeuhtns", *value)
+	suite.Equal(stringValue, *value)
 
-	_, err = suite.engine.Incrby("intvalue", "invalidint")
+	_, err = suite.engine.Incrby(intValueKey, "invalidint")
 	suite.Error(err)
 
-	_, err = suite.engine.Decrby("intvalue", "anotherinvalidint")
+	_, err = suite.engine.Decrby(intValueKey, "anotherinvalidint")
 	suite.Error(err)
 
 	// make sure we haven't modified the int value anywhere in there
-	value, err = suite.engine.Get("intvalue")
+	value, err = suite.engine.Get(intValueKey)
 	suite.NoError(err)
-	suite.Equal("1234567890", *value)
+	suite.Equal(intValueString, *value)
 
-	_, err = suite.engine.Incr("fakevalue")
+	_, err = suite.engine.Incr(fakeValueKey)
 	suite.Error(err)
 
 	// TODO: there's some subtlety here in whether the string parsing fails or
 	// the key is of the wrong type (string, fakevalue, etc) that could use some assertions
 	// but right now we're not sending specific error types so we'll ignore it
-	_, err = suite.engine.Incrby("fakevalue", "10")
+	_, err = suite.engine.Incrby(fakeValueKey, "10")
 	suite.Error(err)
 
-	_, err = suite.engine.Decr("fakevalue")
+	_, err = suite.engine.Decr(fakeValueKey)
 	suite.Error(err)
 
-	_, err = suite.engine.Decrby("fakevalue", "10")
+	_, err = suite.engine.Decrby(fakeValueKey, "10")
 	suite.Error(err)
+
+	typeString, err := suite.engine.Type(fakeValueKey)
+	suite.NoError(err)
+	suite.Equal("fake", typeString)
 }
 
 func (suite *engineTestSuite) TestMGet() {
