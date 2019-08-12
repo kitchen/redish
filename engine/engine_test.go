@@ -177,3 +177,46 @@ func TestType(t *testing.T) {
 
 	assert.Equal(t, "none", engine.Type("doesnotexist"))
 }
+
+func TestExpiration(t *testing.T) {
+	engine := NewEngine()
+
+	ret := engine.Expire("doesnotexist", int64(42))
+	assert.False(t, ret)
+
+	ret = engine.Persist("doesnotexist")
+	assert.False(t, ret)
+
+	engine.Set("abc", "abc")
+	ret = engine.Expire("abc", int64(10000000))
+	assert.True(t, ret)
+	value, err := engine.Get("abc")
+	assert.NoError(t, err)
+	assert.NotNil(t, value)
+	assert.Equal(t, "abc", value)
+	num, err := engine.Exists([]string{"abc"})
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), num)
+
+	engine.Set("def", "def")
+	ret = engine.Expire("def", int64(-10000000))
+	assert.True(t, ret)
+	value, err = engine.Get("def")
+	assert.NoError(t, err)
+	assert.Nil(t, value)
+
+	engine.Set("def", "def")
+	ret = engine.Expire("def", int64(-10000000))
+	assert.True(t, ret)
+	num, err = engine.Exists([]string{"def"})
+	assert.NoError(t, err)
+	assert.Equal(t, int64(0), num)
+
+	engine.Set("persist", "foo")
+	engine.Expire("persist", 100000000)
+	value, err = engine.Get("persist")
+	assert.NoError(t, err)
+	assert.Equal(t, "foo", *value)
+	ret = engine.Persist("persist")
+
+}

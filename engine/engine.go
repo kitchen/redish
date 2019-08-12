@@ -3,6 +3,7 @@ package engine
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 type engine struct {
@@ -23,6 +24,9 @@ type Engine interface {
 	MGet(keys []string) ([]*string, error)
 	MSet(kvs map[string]string) error
 	Type(key string) string
+	Expire(key string, seconds int64) bool
+	Persist(key string) bool
+	TTL(key string) int64
 }
 
 func NewEngine() Engine {
@@ -40,8 +44,14 @@ func (engine *engine) Get(key string) (*string, error) {
 }
 
 func (engine *engine) getStore(key string) valueStoreInterface {
-	store, _ := engine.storage[key]
-	return store
+	if store, _ := engine.storage[key]; store != nil {
+		if store.expired() {
+			engine.del(key)
+			return nil
+		}
+		return store
+	}
+	return nil
 }
 
 func (engine *engine) Set(key string, value string) error {
@@ -59,6 +69,10 @@ func (engine *engine) set(key string, value string) valueStoreInterface {
 	engine.storage[key] = storage
 	return storage
 }
+
+// func (engine *engine) setex(key string, expiration *Date) err {
+//
+// }
 
 func (engine *engine) getOrDefault(key string, defaultValue string) valueStoreInterface {
 	if store := engine.getStore(key); store != nil {
@@ -181,4 +195,38 @@ func (engine *engine) Type(key string) string {
 		return store.getType()
 	}
 	return "none"
+}
+
+func (engine *engine) Expire(key string, seconds int64) bool {
+	if seconds <= 0 {
+		return engine.del(key)
+	}
+	if store := engine.getStore(key); store != nil {
+		expires := time.Now().Add(0)
+		store.expire(&expires)
+		return true
+	}
+	return false
+}
+
+func (engine *engine) Persist(key string) bool {
+	store := engine.getStore(key)
+	if store == nil || store.expires() == nil {
+		return false
+	}
+	store.expire(nil)
+	return true
+}
+
+func (engine *engine) TTL(key string) int64 {
+	store := engine.getStore(key)
+	if store == nil {
+		return int64(-2)
+	}
+	if expires := store.expires(); expires != nil {
+		duration := expires.Sub(time.Now())
+		return int64(duration.Truncate(time.Second).Seconds())
+	} else {
+		return int64(-1)
+	}
 }

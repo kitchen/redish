@@ -136,6 +136,7 @@ func (s *redishServer) Mget(ctx context.Context, keys *pb.KeyList) (*pb.ValueLis
 }
 
 func (s *redishServer) Mset(ctx context.Context, keyvaluelist *pb.KeyValueList) (*pb.OK, error) {
+	log.Printf("MSET %v", keyvaluelist)
 	kvs := make(map[string]string)
 	for _, kv := range keyvaluelist.Pairs {
 		kvs[kv.Key] = kv.Value
@@ -145,5 +146,6 @@ func (s *redishServer) Mset(ctx context.Context, keyvaluelist *pb.KeyValueList) 
 }
 
 func (s *redishServer) Type(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
+	log.Printf("TYPE %v", key.Key)
 	return &pb.SingleValue{Value: s.engine.Type(key.Key)}, nil
 }
