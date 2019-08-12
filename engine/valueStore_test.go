@@ -44,15 +44,3 @@ func (suite *valueStoreTestSuite) TestDefaultPasses() {
 func TestValueStoreTestSuite(t *testing.T) {
 	suite.Run(t, new(valueStoreTestSuite))
 }
-
-//
-// func TestDefaultFailures(t *testing.T) {
-// 	store := fakeValueStore{}
-// 	_, err := store.get()
-// 	assert.Error(t, err)
-//
-// 	_, err = store.incrby(1)
-// 	assert.Error(t, err)
-//
-// 	assert.Equal(t, "fake", store.getType())
-// }
