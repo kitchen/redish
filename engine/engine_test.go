@@ -3,7 +3,6 @@ package engine
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -242,85 +241,102 @@ func (suite *engineTestSuite) TestOtherIncrDecr() {
 }
 
 func (suite *engineTestSuite) TestMGet() {
-
+	localStringValue := stringValue
+	localIntValueString := intValueString
+	values, err := suite.engine.MGet([]string{stringValueKey, intValueKey, doesNotExistKey, fakeValueKey})
+	suite.NoError(err)
+	suite.Equal([]*string{&localStringValue, &localIntValueString, nil, nil}, values)
 }
 
 func (suite *engineTestSuite) TestMSet() {
+	engine := newEngine()
+	pairs := map[string]string{
+		intValueKey:    intValueString,
+		stringValueKey: stringValue,
+	}
+	err := engine.MSet(pairs)
+	suite.NoError(err)
 
+	value, err := engine.Get(intValueKey)
+	suite.NoError(err)
+	suite.Equal(intValueString, *value)
+
+	value, err = engine.Get(stringValueKey)
+	suite.NoError(err)
+	suite.Equal(stringValue, *value)
 }
 
 func (suite *engineTestSuite) TestType() {
+	typeString, err := suite.engine.Type(intValueKey)
+	suite.NoError(err)
+	suite.Equal("string", typeString)
 
+	typeString, err = suite.engine.Type(stringValueKey)
+	suite.NoError(err)
+	suite.Equal("string", typeString)
+
+	typeString, err = suite.engine.Type(fakeValueKey)
+	suite.NoError(err)
+	suite.Equal("fake", typeString)
+
+	typeString, err = suite.engine.Type(doesNotExistKey)
+	suite.NoError(err)
+	suite.Equal("none", typeString)
 }
 
-func (suite *engineTestSuite) TestInternalMethods() {
-	// getOrDefault
-	// getStore
+func (suite *engineTestSuite) TestGetOrDefault() {
+	store := suite.engine.getOrDefault(stringValueKey, "default")
+	value, err := store.get()
+	suite.NoError(err)
+	suite.Equal(stringValue, value)
+
+	store = suite.engine.getOrDefault(doesNotExistKey, "abc")
+	value, err = store.get()
+	suite.NoError(err)
+	suite.Equal("abc", value)
+}
+
+func (suite *engineTestSuite) TestGetStore() {
+	store := suite.engine.getStore(stringValueKey)
+	suite.NotNil(store)
+
+	value, err := store.get()
+	suite.NoError(err)
+	suite.Equal(stringValue, value)
+
+	store = suite.engine.getStore(doesNotExistKey)
+	suite.Nil(store)
 	// set
 	// del
 }
 
+func (suite *engineTestSuite) TestInternalDel() {
+	ret := suite.engine.del(stringValueKey)
+	suite.True(ret)
+
+	value, err := suite.engine.Get(stringValueKey)
+	suite.NoError(err)
+	suite.Nil(value)
+
+	ret = suite.engine.del(doesNotExistKey)
+	suite.False(ret)
+
+	value, err = suite.engine.Get(doesNotExistKey)
+	suite.NoError(err)
+	suite.Nil(value)
+}
+
+func (suite *engineTestSuite) TestInternalSet() {
+	store := suite.engine.getStore(stringValueKey)
+	suite.NotNil(store)
+
+	newStore := suite.engine.set(stringValueKey, stringValue)
+	suite.NotNil(newStore)
+	suite.False(store == newStore)
+
+	suite.True(newStore == suite.engine.getStore(stringValueKey))
+}
+
 func TestEngineTestSuite(t *testing.T) {
 	suite.Run(t, new(engineTestSuite))
-}
-
-func TestMGet(t *testing.T) {
-	engine := newEngine()
-
-	stringValue := "aoeuhtns"
-	intValue := "123"
-	engine.Set("stringvalue", stringValue)
-	engine.Set("intvalue", intValue)
-	engine.setFakeValue("fake")
-
-	values, err := engine.MGet([]string{"stringvalue", "intvalue", "doesnotexist"})
-	assert.NoError(t, err)
-	assert.Equal(t, []*string{&stringValue, &intValue, nil}, values)
-
-	values, err = engine.MGet([]string{"doesnotexist", "doesnotexist2", "doesnotexist3"})
-	assert.Equal(t, []*string{nil, nil, nil}, values)
-	assert.NoError(t, err)
-
-	// TODO: test what happens when mget with an invalid data type (e.g. fakeValueStore)
-	values, err = engine.MGet([]string{"stringvalue", "doesnotexist", "fake"})
-	assert.Equal(t, []*string{&stringValue, nil, nil}, values)
-	assert.NoError(t, err)
-}
-
-func TestMSet(t *testing.T) {
-	engine := newEngine()
-
-	kvs := map[string]string{
-		"foo": "aoeuhtns",
-		"bar": "123",
-	}
-
-	err := engine.MSet(kvs)
-	assert.NoError(t, err)
-
-	value, err := engine.Get("foo")
-	assert.NoError(t, err)
-	assert.Equal(t, "aoeuhtns", *value)
-
-	value, err = engine.Get("bar")
-	assert.NoError(t, err)
-	assert.Equal(t, "123", *value)
-}
-
-func TestType(t *testing.T) {
-	engine := newEngine()
-	engine.Set("stringvalue", "abc")
-
-	typeString, err := engine.Type("stringvalue")
-	assert.Equal(t, "string", typeString)
-	assert.NoError(t, err)
-
-	engine.Set("intvalue", "123")
-	typeString, err = engine.Type("intvalue")
-	assert.Equal(t, "string", typeString)
-	assert.NoError(t, err)
-
-	typeString, err = engine.Type("doesnotexist")
-	assert.Equal(t, "none", typeString)
-	assert.NoError(t, err)
 }
