@@ -3,25 +3,36 @@ package engine
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestStringValue(t *testing.T) {
-	stringValue := "abc"
-	s := stringValueStore{stringValue: stringValue}
-	assert.Equal(t, "abc", s.stringValue, "the storage contains the correct value")
-
-	storedValue, err := s.get()
-	assert.Equal(t, "abc", storedValue, "we get the correct value from the value store for a string")
-	assert.NoError(t, err, "getting the value didn't error")
-
-	assert.Equal(t, "string", s.getType())
+type stringValueStoreTestSuite struct {
+	suite.Suite
+	stringValue string
+	store       stringValueStore
 }
 
-func TestIncrByStringValue(t *testing.T) {
-	s := stringValueStore{stringValue: "abc"}
-	assert.Equal(t, "abc", s.stringValue)
+func (suite *stringValueStoreTestSuite) SetupTests() {
+	suite.stringValue = "abc"
+	suite.store = stringValueStore{stringValue: suite.stringValue}
+}
 
-	_, err := s.incrby(1)
-	assert.Error(t, err)
+func (suite *stringValueStoreTestSuite) TestGet() {
+	suite.Equal(suite.stringValue, suite.store.stringValue)
+	stringValue, err := suite.store.get()
+	suite.Equal(suite.stringValue, stringValue)
+	suite.NoError(err)
+}
+
+func (suite *stringValueStoreTestSuite) TestGetType() {
+	suite.Equal("string", suite.store.getType())
+}
+
+func (suite *stringValueStoreTestSuite) TestIncrBy() {
+	_, err := suite.store.incrby(1)
+	suite.Error(err)
+}
+
+func TestStringValueStore(t *testing.T) {
+	suite.Run(t, new(stringValueStoreTestSuite))
 }
