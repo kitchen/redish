@@ -6,6 +6,7 @@ type valueStore struct{}
 type valueStoreInterface interface {
 	get() (string, error)
 	incrby(by int64) (string, error)
+	getType() string // to be implemented by "subclasses"
 }
 
 func (s *valueStore) get() (string, error) {

@@ -14,3 +14,7 @@ func (s *stringValueStore) get() (string, error) {
 func (s *stringValueStore) incrby(by int64) (string, error) {
 	return "", fmt.Errorf("ERR value is not an integer or out of range")
 }
+
+func (s *stringValueStore) getType() string {
+	return "string"
+}

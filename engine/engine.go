@@ -22,6 +22,7 @@ type Engine interface {
 	GetSet(key string, value string) (*string, error)
 	MGet(keys []string) ([]*string, error)
 	MSet(kvs map[string]string) error
+	Type(key string) string
 }
 
 func NewEngine() Engine {
@@ -167,4 +168,11 @@ func (engine *engine) MSet(kvs map[string]string) error {
 	}
 
 	return nil
+}
+
+func (engine *engine) Type(key string) string {
+	if store := engine.getStore(key); store != nil {
+		return store.getType()
+	}
+	return "none"
 }

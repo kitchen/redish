@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='redish',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0credish.proto\x12\x06redish\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\t\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"$\n\x07KeyList\x12\x19\n\x04keys\x18\x01 \x03(\x0b\x32\x0b.redish.Key\"/\n\x0cKeyValueList\x12\x1f\n\x05pairs\x18\x01 \x03(\x0b\x32\x10.redish.KeyValue\"\x1c\n\x0bSingleValue\x12\r\n\x05value\x18\x01 \x01(\t\"0\n\tValueList\x12#\n\x06values\x18\x01 \x03(\x0b\x32\x13.redish.SingleValue\"(\n\nSetRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x04\n\x02OK2\xb7\x04\n\x06Redish\x12)\n\x03get\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\'\n\x03set\x12\x12.redish.SetRequest\x1a\n.redish.OK\"\x00\x12.\n\x04\x64\x65le\x12\x0f.redish.KeyList\x1a\x13.redish.SingleValue\"\x00\x12\x30\n\x06\x65xists\x12\x0f.redish.KeyList\x1a\x13.redish.SingleValue\"\x00\x12*\n\x04incr\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12*\n\x04\x64\x65\x63r\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\x31\n\x06incrby\x12\x10.redish.KeyValue\x1a\x13.redish.SingleValue\"\x00\x12\x31\n\x06\x64\x65\x63rby\x12\x10.redish.KeyValue\x1a\x13.redish.SingleValue\"\x00\x12,\n\x06strlen\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\x31\n\x06getset\x12\x10.redish.KeyValue\x1a\x13.redish.SingleValue\"\x00\x12,\n\x04mget\x12\x0f.redish.KeyList\x1a\x11.redish.ValueList\"\x00\x12*\n\x04mset\x12\x14.redish.KeyValueList\x1a\n.redish.OK\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x0credish.proto\x12\x06redish\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\t\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"$\n\x07KeyList\x12\x19\n\x04keys\x18\x01 \x03(\x0b\x32\x0b.redish.Key\"/\n\x0cKeyValueList\x12\x1f\n\x05pairs\x18\x01 \x03(\x0b\x32\x10.redish.KeyValue\"\x1c\n\x0bSingleValue\x12\r\n\x05value\x18\x01 \x01(\t\"0\n\tValueList\x12#\n\x06values\x18\x01 \x03(\x0b\x32\x13.redish.SingleValue\"(\n\nSetRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x04\n\x02OK2\xe3\x04\n\x06Redish\x12)\n\x03get\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\'\n\x03set\x12\x12.redish.SetRequest\x1a\n.redish.OK\"\x00\x12.\n\x04\x64\x65le\x12\x0f.redish.KeyList\x1a\x13.redish.SingleValue\"\x00\x12\x30\n\x06\x65xists\x12\x0f.redish.KeyList\x1a\x13.redish.SingleValue\"\x00\x12*\n\x04incr\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12*\n\x04\x64\x65\x63r\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\x31\n\x06incrby\x12\x10.redish.KeyValue\x1a\x13.redish.SingleValue\"\x00\x12\x31\n\x06\x64\x65\x63rby\x12\x10.redish.KeyValue\x1a\x13.redish.SingleValue\"\x00\x12,\n\x06strlen\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\x31\n\x06getset\x12\x10.redish.KeyValue\x1a\x13.redish.SingleValue\"\x00\x12,\n\x04mget\x12\x0f.redish.KeyList\x1a\x11.redish.ValueList\"\x00\x12*\n\x04mset\x12\x14.redish.KeyValueList\x1a\n.redish.OK\"\x00\x12*\n\x04type\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x62\x06proto3')
 )
 
 
@@ -358,7 +358,7 @@ _REDISH = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   serialized_start=300,
-  serialized_end=867,
+  serialized_end=911,
   methods=[
   _descriptor.MethodDescriptor(
     name='get',
@@ -466,6 +466,15 @@ _REDISH = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_KEYVALUELIST,
     output_type=_OK,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='type',
+    full_name='redish.Redish.type',
+    index=12,
+    containing_service=None,
+    input_type=_KEY,
+    output_type=_SINGLEVALUE,
     serialized_options=None,
   ),
 ])

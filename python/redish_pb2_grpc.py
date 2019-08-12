@@ -74,6 +74,11 @@ class RedishStub(object):
         request_serializer=redish__pb2.KeyValueList.SerializeToString,
         response_deserializer=redish__pb2.OK.FromString,
         )
+    self.type = channel.unary_unary(
+        '/redish.Redish/type',
+        request_serializer=redish__pb2.Key.SerializeToString,
+        response_deserializer=redish__pb2.SingleValue.FromString,
+        )
 
 
 class RedishServicer(object):
@@ -164,6 +169,13 @@ class RedishServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def type(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_RedishServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -226,6 +238,11 @@ def add_RedishServicer_to_server(servicer, server):
           servicer.mset,
           request_deserializer=redish__pb2.KeyValueList.FromString,
           response_serializer=redish__pb2.OK.SerializeToString,
+      ),
+      'type': grpc.unary_unary_rpc_method_handler(
+          servicer.type,
+          request_deserializer=redish__pb2.Key.FromString,
+          response_serializer=redish__pb2.SingleValue.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

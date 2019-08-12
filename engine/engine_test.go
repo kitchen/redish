@@ -166,3 +166,14 @@ func TestMSet(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "123", *value)
 }
+
+func TestType(t *testing.T) {
+	engine := NewEngine()
+	engine.Set("stringvalue", "abc")
+	assert.Equal(t, "string", engine.Type("stringvalue"))
+
+	engine.Set("intvalue", "123")
+	assert.Equal(t, "string", engine.Type("intvalue"))
+
+	assert.Equal(t, "none", engine.Type("doesnotexist"))
+}

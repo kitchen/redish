@@ -14,6 +14,8 @@ func TestIntValue(t *testing.T) {
 	storedValue, err := s.get()
 	assert.Equal(t, "123", storedValue, "get returns the correct value as a string")
 	assert.NoError(t, err, "there was no error getting the value")
+
+	assert.Equal(t, "string", s.getType())
 }
 
 func TestIncrBy(t *testing.T) {

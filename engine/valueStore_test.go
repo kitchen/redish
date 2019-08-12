@@ -10,6 +10,10 @@ type fakeValueStore struct {
 	valueStore
 }
 
+func (s *fakeValueStore) getType() string {
+	return "fake"
+}
+
 func TestDefaultFailures(t *testing.T) {
 	store := fakeValueStore{}
 	_, err := store.get()
@@ -17,4 +21,6 @@ func TestDefaultFailures(t *testing.T) {
 
 	_, err = store.incrby(1)
 	assert.Error(t, err)
+
+	assert.Equal(t, "fake", store.getType())
 }

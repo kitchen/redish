@@ -17,6 +17,7 @@ service Redish {
   rpc getset (KeyValue) returns (SingleValue) {}
   rpc mget (KeyList) returns (ValueList) {}
   rpc mset (KeyValueList) returns (OK) {}
+  rpc type (Key) returns (SingleValue) {}
 }
 
 message Key {

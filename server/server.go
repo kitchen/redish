@@ -143,3 +143,7 @@ func (s *redishServer) Mset(ctx context.Context, keyvaluelist *pb.KeyValueList) 
 	err := s.engine.MSet(kvs)
 	return &pb.OK{}, err
 }
+
+func (s *redishServer) Type(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
+	return &pb.SingleValue{Value: s.engine.Type(key.Key)}, nil
+}
