@@ -26,6 +26,10 @@ type Engine interface {
 }
 
 func NewEngine() Engine {
+	return newEngine()
+}
+
+func newEngine() *engine {
 	e := &engine{storage: make(map[string]valueStoreInterface)}
 	return e
 }

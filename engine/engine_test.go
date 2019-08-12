@@ -3,8 +3,18 @@ package engine
 import "testing"
 import "github.com/stretchr/testify/assert"
 
+func TestNewEngine(t *testing.T) {
+	var bigEngine Engine
+	bigEngine = NewEngine()
+	assert.NotNil(t, bigEngine)
+
+	var littleEngine *engine
+	littleEngine = newEngine()
+	assert.NotNil(t, littleEngine)
+}
+
 func TestEngineIncr(t *testing.T) {
-	engine := NewEngine()
+	engine := newEngine()
 	value, err := engine.Incr("abc")
 	assert.Equal(t, "1", value)
 	assert.NoError(t, err)
@@ -46,7 +56,7 @@ func TestEngineIncr(t *testing.T) {
 }
 
 func TestGetSetDelExists(t *testing.T) {
-	engine := NewEngine()
+	engine := newEngine()
 	err := engine.Set("abc", "foo")
 	assert.NoError(t, err)
 	value, err := engine.Get("abc")
@@ -106,10 +116,14 @@ func TestGetSetDelExists(t *testing.T) {
 	value, err = engine.Get("getset")
 	assert.Equal(t, "def", *value)
 	assert.NoError(t, err)
+
+	engine.setFakeValue("fake")
+	_, err = engine.GetSet("fake", "fake")
+	assert.Error(t, err)
 }
 
 func TestStrLen(t *testing.T) {
-	engine := NewEngine()
+	engine := newEngine()
 
 	engine.Set("stringvalue", "aoeuhtns")
 	value, err := engine.Strlen("stringvalue")
@@ -126,15 +140,19 @@ func TestStrLen(t *testing.T) {
 	assert.NoError(t, err)
 
 	// TODO: test what happens when strlen on an invalid data type (e.g. fakeValueStore)
+	engine.setFakeValue("fake")
+	_, err = engine.Strlen("fake")
+	assert.Error(t, err)
 }
 
 func TestMGet(t *testing.T) {
-	engine := NewEngine()
+	engine := newEngine()
 
 	stringValue := "aoeuhtns"
 	intValue := "123"
 	engine.Set("stringvalue", stringValue)
 	engine.Set("intvalue", intValue)
+	engine.setFakeValue("fake")
 
 	values, err := engine.MGet([]string{"stringvalue", "intvalue", "doesnotexist"})
 	assert.NoError(t, err)
@@ -145,10 +163,13 @@ func TestMGet(t *testing.T) {
 	assert.NoError(t, err)
 
 	// TODO: test what happens when mget with an invalid data type (e.g. fakeValueStore)
+	values, err = engine.MGet([]string{"stringvalue", "doesnotexist", "fake"})
+	assert.Equal(t, []*string{&stringValue, nil, nil}, values)
+	assert.NoError(t, err)
 }
 
 func TestMSet(t *testing.T) {
-	engine := NewEngine()
+	engine := newEngine()
 
 	kvs := map[string]string{
 		"foo": "aoeuhtns",
@@ -168,7 +189,7 @@ func TestMSet(t *testing.T) {
 }
 
 func TestType(t *testing.T) {
-	engine := NewEngine()
+	engine := newEngine()
 	engine.Set("stringvalue", "abc")
 	assert.Equal(t, "string", engine.Type("stringvalue"))
 
