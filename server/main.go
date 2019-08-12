@@ -55,6 +55,19 @@ func (s *redishServer) Dele(ctx context.Context, keys *pb.KeyList) (*pb.SingleVa
 	return &pb.SingleValue{Value: fmt.Sprintf("%d", deleted)}, nil
 }
 
+func (s *redishServer) Exists(ctx context.Context, keys *pb.KeyList) (*pb.SingleValue, error) {
+	log.Printf("EXISTS %v", keys)
+	keyStrings := make([]string, len(keys.Keys))
+	for i, key := range keys.Keys {
+		keyStrings[i] = key.Key
+	}
+	exists, err := s.engine.Exists(keyStrings)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.SingleValue{Value: fmt.Sprintf("%d", exists)}, nil
+}
+
 func (s *redishServer) Incr(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
 	log.Printf("INCR %v", key.Key)
 
@@ -67,6 +80,61 @@ func (s *redishServer) Decr(ctx context.Context, key *pb.Key) (*pb.SingleValue, 
 
 	value, err := s.engine.Decr(key.Key)
 	return &pb.SingleValue{Value: value}, err
+}
+
+func (s *redishServer) Incrby(ctx context.Context, keyvalue *pb.KeyValue) (*pb.SingleValue, error) {
+	log.Printf("INCRBY %v %v", keyvalue.Key, keyvalue.Value)
+	if value, err := s.engine.Incrby(keyvalue.Key, keyvalue.Value); err == nil {
+		return &pb.SingleValue{Value: value}, err
+	} else {
+		return nil, err
+	}
+}
+
+func (s *redishServer) Decrby(ctx context.Context, keyvalue *pb.KeyValue) (*pb.SingleValue, error) {
+	log.Printf("DECRBY %v %v", keyvalue.Key, keyvalue.Value)
+	if value, err := s.engine.Decrby(keyvalue.Key, keyvalue.Value); err == nil {
+		return &pb.SingleValue{Value: value}, err
+	} else {
+		return nil, err
+	}
+}
+
+func (s *redishServer) Strlen(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
+	log.Printf("STRLEN %v", key.Key)
+	value, err := s.engine.Strlen(key.Key)
+	return &pb.SingleValue{Value: value}, err
+}
+
+func (s *redishServer) Getset(ctx context.Context, keyvalue *pb.KeyValue) (*pb.SingleValue, error) {
+	log.Printf("GETSET %v %v", keyvalue.Key, keyvalue.Value)
+	if value, err := s.engine.GetSet(keyvalue.Key, keyvalue.Value); value != nil {
+		return &pb.SingleValue{Value: *value}, err
+	} else {
+		return &pb.SingleValue{}, err
+	}
+}
+
+func (s *redishServer) Mget(ctx context.Context, keys *pb.KeyList) (*pb.ValueList, error) {
+	log.Printf("MGET %v", keys)
+	keyStrings := make([]string, len(keys.Keys))
+	for i, key := range keys.Keys {
+		keyStrings[i] = key.Key
+	}
+	values, err := s.engine.MGet(keyStrings)
+	if err != nil {
+		return nil, err
+	}
+	singleValues := make([]*pb.SingleValue, len(keys.Keys))
+	for i, value := range values {
+		if value != nil {
+			singleValues[i] = &pb.SingleValue{Value: *value}
+		} else {
+			singleValues[i] = &pb.SingleValue{}
+		}
+	}
+
+	return &pb.ValueList{Values: singleValues}, nil
 }
 
 func main() {

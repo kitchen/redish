@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 )
 
@@ -16,6 +16,11 @@ type Engine interface {
 	Exists(keys []string) (int64, error)
 	Incr(key string) (string, error)
 	Decr(key string) (string, error)
+	Incrby(key string, by string) (string, error)
+	Decrby(key string, by string) (string, error)
+	Strlen(key string) (string, error)
+	GetSet(key string, value string) (*string, error)
+	MGet(keys []string) ([]*string, error)
 }
 
 func NewEngine() Engine {
@@ -24,14 +29,11 @@ func NewEngine() Engine {
 }
 
 func (engine *engine) Get(key string) (*string, error) {
-	store, ok := engine.storage[key]
-	if !ok {
-		log.Printf("key %v doesn't exist!", key)
+	store := engine.getStore(key)
+	if store == nil {
 		return nil, nil
 	}
-	log.Printf("key %v exists, got store: %v", key, store)
 	value, err := store.get()
-
 	return &value, err
 }
 
@@ -95,4 +97,65 @@ func (engine *engine) Incr(key string) (string, error) {
 func (engine *engine) Decr(key string) (string, error) {
 	store := engine.getOrDefault(key, "0")
 	return store.incrby(-1)
+}
+
+func (engine *engine) Incrby(key string, by string) (string, error) {
+	if intValue, err := strconv.ParseInt(by, 10, 64); err == nil {
+		store := engine.getOrDefault(key, "0")
+		return store.incrby(intValue)
+	}
+	return "", fmt.Errorf("ERR value is not an integer or out of range")
+
+}
+
+func (engine *engine) Decrby(key string, by string) (string, error) {
+	if intValue, err := strconv.ParseInt(by, 10, 64); err == nil {
+		store := engine.getOrDefault(key, "0")
+		return store.incrby(-intValue)
+	}
+	return "", fmt.Errorf("ERR value is not an integer or out of range")
+}
+
+func (engine *engine) Strlen(key string) (string, error) {
+	store := engine.getStore(key)
+	if store == nil {
+		return "0", nil
+	}
+	if value, err := store.get(); err == nil {
+		return fmt.Sprintf("%d", len(value)), nil
+	} else {
+		return "", err
+	}
+}
+
+func (engine *engine) GetSet(key string, value string) (*string, error) {
+	store := engine.getStore(key)
+	var oldValue *string
+	if store == nil {
+		oldValue = nil
+	} else {
+		value, err := store.get()
+		if err != nil {
+			return nil, err
+		}
+		oldValue = &value
+	}
+	engine.set(key, value)
+	return oldValue, nil
+}
+
+func (engine *engine) MGet(keys []string) ([]*string, error) {
+	values := make([]*string, len(keys))
+	for i, key := range keys {
+		if store := engine.getStore(key); store != nil {
+			if value, err := store.get(); err == nil {
+				values[i] = &value
+			} else {
+				values[i] = nil
+			}
+		} else {
+			values[i] = nil
+		}
+	}
+	return values, nil
 }

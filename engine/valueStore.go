@@ -13,5 +13,5 @@ func (s *valueStore) get() (string, error) {
 }
 
 func (s *valueStore) incrby(by int64) (string, error) {
-	return "", fmt.Errorf("TODO: invalid method on data type")
+	return "", fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 }

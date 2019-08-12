@@ -20,6 +20,29 @@ func TestEngineIncr(t *testing.T) {
 	value, err = engine.Decr("def")
 	assert.Equal(t, "-2", value)
 	assert.NoError(t, err)
+
+	value, err = engine.Incrby("foo", "10")
+	assert.Equal(t, "10", value)
+	assert.NoError(t, err)
+
+	value, err = engine.Incrby("foo", "10")
+	assert.Equal(t, "20", value)
+	assert.NoError(t, err)
+
+	value, err = engine.Decrby("bar", "10")
+	assert.Equal(t, "-10", value)
+	assert.NoError(t, err)
+
+	value, err = engine.Decrby("bar", "10")
+	assert.Equal(t, "-20", value)
+	assert.NoError(t, err)
+
+	_, err = engine.Incrby("aoeuhtns", "aoeuhtns")
+	assert.Error(t, err)
+
+	_, err = engine.Decrby("aoeuhtns", "aoeuhtns")
+	assert.Error(t, err)
+
 }
 
 func TestGetSetDelExists(t *testing.T) {
@@ -71,25 +94,55 @@ func TestGetSetDelExists(t *testing.T) {
 	value, err = engine.Get("doesnotexist")
 	assert.Nil(t, value)
 	assert.NoError(t, err)
+
+	value, err = engine.GetSet("getset", "abc")
+	assert.Nil(t, value)
+	assert.NoError(t, err)
+
+	value, err = engine.GetSet("getset", "def")
+	assert.Equal(t, "abc", *value)
+	assert.NoError(t, err)
+
+	value, err = engine.Get("getset")
+	assert.Equal(t, "def", *value)
+	assert.NoError(t, err)
 }
 
-// TODO: move this up to engine.Get / engine.Set since this is no longer a function of the valueStore
-// func TestStringToIntAndBackAndForth(t *testing.T) {
-// 	intValue := int64(123)
-// 	stringValue := "abc"
-// 	s := valueStore{intValue: &intValue}
-// 	assert.Nil(t, s.stringValue)
-// 	assert.Equal(t, int64(123), *s.intValue)
-//
-// 	s.set(stringValue)
-// 	assert.Nil(t, s.intValue)
-// 	assert.Equal(t, stringValue, *s.stringValue)
-//
-// 	s = valueStore{stringValue: &stringValue}
-// 	assert.Nil(t, s.intValue)
-// 	assert.Equal(t, stringValue, *s.stringValue)
-//
-// 	s.set(fmt.Sprintf("%d", intValue))
-// 	assert.Nil(t, s.stringValue)
-// 	assert.Equal(t, intValue, *s.intValue)
-// }
+func TestStrLen(t *testing.T) {
+	engine := NewEngine()
+
+	engine.Set("stringvalue", "aoeuhtns")
+	value, err := engine.Strlen("stringvalue")
+	assert.NoError(t, err)
+	assert.Equal(t, "8", value)
+
+	engine.Set("intvalue", "1234567890")
+	value, err = engine.Strlen("intvalue")
+	assert.NoError(t, err)
+	assert.Equal(t, "10", value)
+
+	value, err = engine.Strlen("doesnotexist")
+	assert.Equal(t, "0", value)
+	assert.NoError(t, err)
+
+	// TODO: test what happens when strlen on an invalid data type (e.g. fakeValueStore)
+}
+
+func TestMGet(t *testing.T) {
+	engine := NewEngine()
+
+	stringValue := "aoeuhtns"
+	intValue := "123"
+	engine.Set("stringvalue", stringValue)
+	engine.Set("intvalue", intValue)
+
+	values, err := engine.MGet([]string{"stringvalue", "intvalue", "doesnotexist"})
+	assert.NoError(t, err)
+	assert.Equal(t, []*string{&stringValue, &intValue, nil}, values)
+
+	values, err = engine.MGet([]string{"doesnotexist", "doesnotexist2", "doesnotexist3"})
+	assert.Equal(t, []*string{nil, nil, nil}, values)
+	assert.NoError(t, err)
+
+	// TODO: test what happens when mget with an invalid data type (e.g. fakeValueStore)
+}
