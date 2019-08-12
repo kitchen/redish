@@ -3,32 +3,44 @@ package engine
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestIntValue(t *testing.T) {
-	intValue := int64(123)
-	s := intValueStore{intValue: intValue}
-	assert.Equal(t, int64(123), s.intValue, "the storage contains the correct value")
-
-	storedValue, err := s.get()
-	assert.Equal(t, "123", storedValue, "get returns the correct value as a string")
-	assert.NoError(t, err, "there was no error getting the value")
-
-	assert.Equal(t, "string", s.getType())
+type intValueStoreTestSuite struct {
+	suite.Suite
+	intValue int64
+	store    intValueStore
 }
 
-func TestIncrBy(t *testing.T) {
-	intValue := int64(123)
-	s := intValueStore{intValue: intValue}
+func (suite *intValueStoreTestSuite) SetupTests() {
+	suite.intValue = 123
+	suite.store = intValueStore{intValue: suite.intValue}
+}
 
-	assert.Equal(t, int64(123), s.intValue)
+func (suite *intValueStoreTestSuite) TestGet() {
+	suite.Equal(suite.intValue, suite.store.intValue)
 
-	newValue, err := s.incrby(1)
-	assert.Equal(t, "124", newValue)
-	assert.NoError(t, err)
+	value, err := suite.store.get()
+	suite.Equal(suite.intValue, value)
+	suite.NoError(err)
+}
 
-	newValue, err = s.incrby(-122)
-	assert.Equal(t, "2", newValue)
-	assert.NoError(t, err)
+func (suite *intValueStoreTestSuite) TestGetType() {
+	suite.Equal("string", suite.store.getType())
+}
+
+func (suite *intValueStoreTestSuite) TestIncrBy() {
+	newExpectedValue := suite.intValue + 10
+	newValue, err := suite.store.incrby(10)
+	suite.Equal(newExpectedValue, newValue)
+	suite.NoError(err)
+
+	newExpectedValue -= 20
+	newValue, err = suite.store.incrby(-20)
+	suite.Equal(newExpectedValue, newValue)
+	suite.NoError(err)
+}
+
+func TestIntValueStore(t *testing.T) {
+	suite.Run(t, new(intValueStoreTestSuite))
 }
