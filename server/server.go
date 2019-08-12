@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/kitchen/redish/engine"
@@ -40,7 +39,7 @@ func (s *redishServer) Set(ctx context.Context, sr *pb.SetRequest) (*pb.OK, erro
 	return &pb.OK{}, nil
 }
 
-func (s *redishServer) Dele(ctx context.Context, keys *pb.KeyList) (*pb.SingleValue, error) {
+func (s *redishServer) Dele(ctx context.Context, keys *pb.KeyList) (*pb.IntValue, error) {
 	log.Printf("DELE %v", keys)
 	keyStrings := make([]string, len(keys.Keys))
 	for i, key := range keys.Keys {
@@ -50,10 +49,10 @@ func (s *redishServer) Dele(ctx context.Context, keys *pb.KeyList) (*pb.SingleVa
 	if err != nil {
 		return nil, err
 	}
-	return &pb.SingleValue{Value: fmt.Sprintf("%d", deleted)}, nil
+	return &pb.IntValue{Value: deleted}, nil
 }
 
-func (s *redishServer) Exists(ctx context.Context, keys *pb.KeyList) (*pb.SingleValue, error) {
+func (s *redishServer) Exists(ctx context.Context, keys *pb.KeyList) (*pb.IntValue, error) {
 	log.Printf("EXISTS %v", keys)
 	keyStrings := make([]string, len(keys.Keys))
 	for i, key := range keys.Keys {
@@ -63,45 +62,45 @@ func (s *redishServer) Exists(ctx context.Context, keys *pb.KeyList) (*pb.Single
 	if err != nil {
 		return nil, err
 	}
-	return &pb.SingleValue{Value: fmt.Sprintf("%d", exists)}, nil
+	return &pb.IntValue{Value: exists}, nil
 }
 
-func (s *redishServer) Incr(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
+func (s *redishServer) Incr(ctx context.Context, key *pb.Key) (*pb.IntValue, error) {
 	log.Printf("INCR %v", key.Key)
 
 	value, err := s.engine.Incr(key.Key)
-	return &pb.SingleValue{Value: value}, err
+	return &pb.IntValue{Value: value}, err
 }
 
-func (s *redishServer) Decr(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
+func (s *redishServer) Decr(ctx context.Context, key *pb.Key) (*pb.IntValue, error) {
 	log.Printf("DECR %v", key.Key)
 
 	value, err := s.engine.Decr(key.Key)
-	return &pb.SingleValue{Value: value}, err
+	return &pb.IntValue{Value: value}, err
 }
 
-func (s *redishServer) Incrby(ctx context.Context, keyvalue *pb.KeyValue) (*pb.SingleValue, error) {
+func (s *redishServer) Incrby(ctx context.Context, keyvalue *pb.KeyValue) (*pb.IntValue, error) {
 	log.Printf("INCRBY %v %v", keyvalue.Key, keyvalue.Value)
 	if value, err := s.engine.Incrby(keyvalue.Key, keyvalue.Value); err == nil {
-		return &pb.SingleValue{Value: value}, err
+		return &pb.IntValue{Value: value}, err
 	} else {
 		return nil, err
 	}
 }
 
-func (s *redishServer) Decrby(ctx context.Context, keyvalue *pb.KeyValue) (*pb.SingleValue, error) {
+func (s *redishServer) Decrby(ctx context.Context, keyvalue *pb.KeyValue) (*pb.IntValue, error) {
 	log.Printf("DECRBY %v %v", keyvalue.Key, keyvalue.Value)
 	if value, err := s.engine.Decrby(keyvalue.Key, keyvalue.Value); err == nil {
-		return &pb.SingleValue{Value: value}, err
+		return &pb.IntValue{Value: value}, err
 	} else {
 		return nil, err
 	}
 }
 
-func (s *redishServer) Strlen(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
+func (s *redishServer) Strlen(ctx context.Context, key *pb.Key) (*pb.IntValue, error) {
 	log.Printf("STRLEN %v", key.Key)
 	value, err := s.engine.Strlen(key.Key)
-	return &pb.SingleValue{Value: value}, err
+	return &pb.IntValue{Value: value}, err
 }
 
 func (s *redishServer) Getset(ctx context.Context, keyvalue *pb.KeyValue) (*pb.SingleValue, error) {
@@ -145,5 +144,6 @@ func (s *redishServer) Mset(ctx context.Context, keyvaluelist *pb.KeyValueList) 
 }
 
 func (s *redishServer) Type(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
-	return &pb.SingleValue{Value: s.engine.Type(key.Key)}, nil
+	typeString, err := s.engine.Type(key.Key)
+	return &pb.SingleValue{Value: typeString}, err
 }
