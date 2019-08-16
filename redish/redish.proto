@@ -18,6 +18,13 @@ service Redish {
   rpc mget (KeyList) returns (ValueList) {}
   rpc mset (KeyValueList) returns (OK) {}
   rpc type (Key) returns (SingleValue) {}
+  rpc expire (KeyIntValue) returns (IntValue) {}
+  rpc pexpire (KeyIntValue) returns (IntValue) {}
+  rpc expireat (KeyIntValue) returns (IntValue) {}
+  rpc pexpireat (KeyIntValue) returns (IntValue) {}
+  rpc persist (Key) returns (IntValue) {}
+  rpc ttl (Key) returns (IntValue) {}
+  rpc pttl (Key) returns (IntValue) {}
 }
 
 message Key {

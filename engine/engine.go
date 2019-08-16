@@ -2,6 +2,7 @@ package engine
 
 import (
 	"strconv"
+	"time"
 )
 
 type engine struct {
@@ -22,6 +23,15 @@ type Engine interface {
 	MGet(keys []string) ([]*string, error)
 	MSet(kvs map[string]string) error
 	Type(key string) (string, error)
+	Expire(key string, seconds int64) (bool, error)
+	PExpire(key string, millis int64) (bool, error)
+	// seconds since epoch
+	ExpireAt(key string, seconds int64) (bool, error)
+	// millis since epoch
+	PExpireAt(key string, millis int64) (bool, error)
+	Persist(key string) (bool, error)
+	TTL(key string) (int64, error)
+	PTTL(key string) (int64, error)
 }
 
 func NewEngine() Engine {
@@ -44,6 +54,14 @@ func (engine *engine) Get(key string) (*string, error) {
 
 func (engine *engine) getStore(key string) valueStoreInterface {
 	store, _ := engine.storage[key]
+	if store == nil {
+		return nil
+	}
+
+	if store.expired() {
+		engine.del(key)
+		return nil
+	}
 	return store
 }
 
@@ -178,4 +196,80 @@ func (engine *engine) Type(key string) (string, error) {
 		return store.getType(), nil
 	}
 	return "none", nil
+}
+
+func (engine *engine) Expire(key string, seconds int64) (bool, error) {
+	duration := time.Duration(time.Second.Nanoseconds() * seconds)
+	expireAt := time.Now().Add(duration)
+	return engine.expireAt(key, expireAt), nil
+}
+func (engine *engine) PExpire(key string, millis int64) (bool, error) {
+	duration := time.Duration(time.Millisecond.Nanoseconds() * millis)
+	expireAt := time.Now().Add(duration)
+	return engine.expireAt(key, expireAt), nil
+}
+
+func (engine *engine) ExpireAt(key string, seconds int64) (bool, error) {
+	expireAt := time.Unix(seconds, 0)
+	return engine.expireAt(key, expireAt), nil
+}
+
+func (engine *engine) PExpireAt(key string, millis int64) (bool, error) {
+	millisPart := millis % 1000
+	secondsPart := millis / 1000
+	millisNanos := time.Millisecond.Nanoseconds() * millisPart
+	expireAt := time.Unix(secondsPart, millisNanos)
+	return engine.expireAt(key, expireAt), nil
+}
+
+func (engine *engine) expireAt(key string, at time.Time) bool {
+	store := engine.getStore(key)
+	if store == nil {
+		return false
+	}
+
+	if time.Now().After(at) {
+		engine.del(key)
+		return false
+	} else {
+		store.expire(&at)
+		return true
+	}
+}
+
+func (engine *engine) Persist(key string) (bool, error) {
+	store := engine.getStore(key)
+	if store == nil || store.expires() == nil {
+		return false, nil
+	}
+	store.expire(nil)
+	return true, nil
+}
+
+func (engine *engine) TTL(key string) (int64, error) {
+	store := engine.getStore(key)
+	if store == nil {
+		return int64(-2), nil
+	}
+	expireAt := store.expires()
+	if expireAt == nil {
+		return int64(-1), nil
+	}
+
+	ttl := expireAt.Sub(time.Now()).Seconds()
+	return int64(ttl), nil
+}
+
+func (engine *engine) PTTL(key string) (int64, error) {
+	store := engine.getStore(key)
+	if store == nil {
+		return int64(-2), nil
+	}
+	expireAt := store.expires()
+	if expireAt == nil {
+		return int64(-1), nil
+	}
+
+	ttl := expireAt.Sub(time.Now()).Nanoseconds() / 1000000
+	return ttl, nil
 }

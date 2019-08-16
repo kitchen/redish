@@ -148,3 +148,46 @@ func (s *redishServer) Type(ctx context.Context, key *pb.Key) (*pb.SingleValue, 
 	typeString, err := s.engine.Type(key.Key)
 	return &pb.SingleValue{Value: typeString}, err
 }
+
+
+func (s *redishServer) Expire(ctx context.Context, keyintvalue *pb.KeyIntValue) (*pb.IntValue, error) {
+  log.Printf("EXPIRE %v %v", keyintvalue.Key, keyintvalue.Value)
+  ret, err := s.engine.Expire(keyintvalue.Key, keyintvalue.Value)
+  return &pb.IntValue{Value: TODO: ternary operator}, err
+}
+
+func (s *redishServer) Pexpire(ctx context.Context, keyintvalue *pb.KeyIntValue) (*pb.IntValue, error) {
+  log.Printf("PEXPIRE %v %v", keyintvalue.Key, keyintvalue.Value)
+  ret, err := s.engine.PExpire(keyintvalue.Key, keyintvalue.Value)
+  return &pb.IntValue{Value: TODO: ternary operator}, err
+}
+
+func (s *redishServer) Expireat(ctx context.Context, keyintvalue *pb.KeyIntValue) (*pb.IntValue, error) {
+  log.Printf("EXPIREAT %v %v", keyintvalue.Key, keyintvalue.Value)
+  ret, err := s.engine.ExpireAt(keyintvalue.Key, keyintvalue.Value)
+  return &pb.IntValue{Value: TODO: ternary operator}, err
+}
+
+func (s *redishServer) Pexpireat(ctx context.Context, keyintvalue *pb.KeyIntValue) (*pb.IntValue, error) {
+  log.Printf("PEXPIREAT %v %v", keyintvalue.Key, keyintvalue.Value)
+  ret, err := s.engine.PExpireAt(keyintvalue.Key, keyintvalue.Value)
+  return &pb.IntValue{Value: TODO: ternary operator}, err
+}
+
+func (s *redishServer) Persist(ctx context.Context, key *pb.Key) (*pb.IntValue, error) {
+  log.Printf("PERSIST %v", key.Key)
+  ret, err := s.engine.Persist(key.Key)
+  return &pb.IntValue{Value: TODO: ternary operator}, err
+}
+
+func (s *redishServer) Ttl(ctx context.Context, key *pb.Key) (*pb.IntValue, error) {
+  log.Printf("TTL %v", key.Key)
+  ret, err := s.engine.TTL(key.Key)
+  return &pb.IntValue{Value: ret}, err
+}
+
+func (s *redishServer) Ttl(ctx context.Context, key *pb.Key) (*pb.IntValue, error) {
+  log.Printf("PTTL %v", key.Key)
+  ret, err := s.engine.PTTL(key.Key)
+  return &pb.IntValue{Value: ret}, err
+}

@@ -79,6 +79,41 @@ class RedishStub(object):
         request_serializer=redish__pb2.Key.SerializeToString,
         response_deserializer=redish__pb2.SingleValue.FromString,
         )
+    self.expire = channel.unary_unary(
+        '/redish.Redish/expire',
+        request_serializer=redish__pb2.KeyIntValue.SerializeToString,
+        response_deserializer=redish__pb2.IntValue.FromString,
+        )
+    self.pexpire = channel.unary_unary(
+        '/redish.Redish/pexpire',
+        request_serializer=redish__pb2.KeyIntValue.SerializeToString,
+        response_deserializer=redish__pb2.IntValue.FromString,
+        )
+    self.expireat = channel.unary_unary(
+        '/redish.Redish/expireat',
+        request_serializer=redish__pb2.KeyIntValue.SerializeToString,
+        response_deserializer=redish__pb2.IntValue.FromString,
+        )
+    self.pexpireat = channel.unary_unary(
+        '/redish.Redish/pexpireat',
+        request_serializer=redish__pb2.KeyIntValue.SerializeToString,
+        response_deserializer=redish__pb2.IntValue.FromString,
+        )
+    self.persist = channel.unary_unary(
+        '/redish.Redish/persist',
+        request_serializer=redish__pb2.Key.SerializeToString,
+        response_deserializer=redish__pb2.IntValue.FromString,
+        )
+    self.ttl = channel.unary_unary(
+        '/redish.Redish/ttl',
+        request_serializer=redish__pb2.Key.SerializeToString,
+        response_deserializer=redish__pb2.IntValue.FromString,
+        )
+    self.pttl = channel.unary_unary(
+        '/redish.Redish/pttl',
+        request_serializer=redish__pb2.Key.SerializeToString,
+        response_deserializer=redish__pb2.IntValue.FromString,
+        )
 
 
 class RedishServicer(object):
@@ -176,6 +211,55 @@ class RedishServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def expire(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def pexpire(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def expireat(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def pexpireat(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def persist(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ttl(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def pttl(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_RedishServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -243,6 +327,41 @@ def add_RedishServicer_to_server(servicer, server):
           servicer.type,
           request_deserializer=redish__pb2.Key.FromString,
           response_serializer=redish__pb2.SingleValue.SerializeToString,
+      ),
+      'expire': grpc.unary_unary_rpc_method_handler(
+          servicer.expire,
+          request_deserializer=redish__pb2.KeyIntValue.FromString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
+      ),
+      'pexpire': grpc.unary_unary_rpc_method_handler(
+          servicer.pexpire,
+          request_deserializer=redish__pb2.KeyIntValue.FromString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
+      ),
+      'expireat': grpc.unary_unary_rpc_method_handler(
+          servicer.expireat,
+          request_deserializer=redish__pb2.KeyIntValue.FromString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
+      ),
+      'pexpireat': grpc.unary_unary_rpc_method_handler(
+          servicer.pexpireat,
+          request_deserializer=redish__pb2.KeyIntValue.FromString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
+      ),
+      'persist': grpc.unary_unary_rpc_method_handler(
+          servicer.persist,
+          request_deserializer=redish__pb2.Key.FromString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
+      ),
+      'ttl': grpc.unary_unary_rpc_method_handler(
+          servicer.ttl,
+          request_deserializer=redish__pb2.Key.FromString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
+      ),
+      'pttl': grpc.unary_unary_rpc_method_handler(
+          servicer.pttl,
+          request_deserializer=redish__pb2.Key.FromString,
+          response_serializer=redish__pb2.IntValue.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

@@ -2,6 +2,7 @@ package engine
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/suite"
 )
@@ -300,8 +301,6 @@ func (suite *engineTestSuite) TestGetStore() {
 
 	store = suite.engine.getStore(doesNotExistKey)
 	suite.Nil(store)
-	// set
-	// del
 }
 
 func (suite *engineTestSuite) TestInternalDel() {
@@ -329,6 +328,148 @@ func (suite *engineTestSuite) TestInternalSet() {
 	suite.False(store == newStore)
 
 	suite.True(newStore == suite.engine.getStore(stringValueKey))
+}
+
+func (suite *engineTestSuite) TestExpire() {
+	truefalse, err := suite.engine.Expire(stringValueKey, int64((24 * time.Hour).Seconds()))
+	suite.True(truefalse)
+	suite.NoError(err)
+
+	ttl, err := suite.engine.TTL(stringValueKey)
+	// unless I use something like ruby's TimeCop I can't guarantee any real time, but I think > 100 should be fine :)
+	suite.Greater(ttl, int64(100))
+	suite.NoError(err)
+
+	truefalse, err = suite.engine.Expire(doesNotExistKey, int64((24 * time.Hour).Seconds()))
+	suite.False(truefalse)
+	suite.NoError(err)
+}
+
+func (suite *engineTestSuite) TestPExpire() {
+	truefalse, err := suite.engine.PExpire(stringValueKey, int64((24*time.Hour).Seconds()*1000))
+	suite.True(truefalse)
+	suite.NoError(err)
+
+	ttl, err := suite.engine.PTTL(stringValueKey)
+	// unless I use something like ruby's TimeCop I can't guarantee any real time, but I think > 100 * 1000 should be fine :)
+	suite.Greater(ttl, int64(100000))
+	suite.NoError(err)
+
+	truefalse, err = suite.engine.PExpire(doesNotExistKey, int64((24*time.Hour).Seconds()*1000))
+	suite.False(truefalse)
+	suite.NoError(err)
+}
+
+func (suite *engineTestSuite) TestExpireAt() {
+	expireAt := time.Now().Add(24 * time.Hour)
+	truefalse, err := suite.engine.ExpireAt(stringValueKey, expireAt.Unix())
+	suite.True(truefalse)
+	suite.NoError(err)
+
+	ttl, err := suite.engine.TTL(stringValueKey)
+	// unless I use something like ruby's TimeCop I can't guarantee any real time, but I think > 100 should be fine :)
+	suite.Greater(ttl, int64(100))
+	suite.NoError(err)
+
+	truefalse, err = suite.engine.ExpireAt(doesNotExistKey, expireAt.Unix())
+	suite.False(truefalse)
+	suite.NoError(err)
+}
+
+func (suite *engineTestSuite) TestPExpireAt() {
+	expireAt := time.Now().Add(24 * time.Hour)
+	truefalse, err := suite.engine.ExpireAt(stringValueKey, expireAt.UnixNano()/1000000)
+	suite.True(truefalse)
+	suite.NoError(err)
+
+	ttl, err := suite.engine.TTL(stringValueKey)
+	// unless I use something like ruby's TimeCop I can't guarantee any real time, but I think > 100 should be fine :)
+	suite.Greater(ttl, int64(100))
+	suite.NoError(err)
+
+	truefalse, err = suite.engine.PExpireAt(doesNotExistKey, expireAt.UnixNano()/1000000)
+	suite.False(truefalse)
+	suite.NoError(err)
+}
+
+func (suite *engineTestSuite) TestPersist() {
+	suite.engine.Expire(stringValueKey, int64((24 * time.Hour).Seconds()))
+	truevalue, err := suite.engine.Persist(stringValueKey)
+	suite.True(truevalue)
+	suite.NoError(err)
+
+	truevalue, err = suite.engine.Persist(intValueKey)
+	suite.False(truevalue)
+	suite.NoError(err)
+
+	truevalue, err = suite.engine.Persist(doesNotExistKey)
+	suite.False(truevalue)
+	suite.NoError(err)
+}
+
+func (suite *engineTestSuite) TestTTL() {
+	suite.engine.Expire(stringValueKey, int64((24 * time.Hour).Seconds()))
+	seconds, err := suite.engine.TTL(stringValueKey)
+	suite.Greater(seconds, int64(100))
+	suite.NoError(err)
+
+	seconds, err = suite.engine.TTL(intValueKey)
+	suite.Equal(int64(-1), seconds)
+	suite.NoError(err)
+
+	seconds, err = suite.engine.TTL(doesNotExistKey)
+	suite.Equal(int64(-2), seconds)
+	suite.NoError(err)
+}
+
+func (suite *engineTestSuite) TestPTTL() {
+	suite.engine.Expire(stringValueKey, int64((24 * time.Hour).Seconds()))
+	millis, err := suite.engine.PTTL(stringValueKey)
+	suite.Greater(millis, int64(100000))
+	suite.NoError(err)
+
+	millis, err = suite.engine.PTTL(intValueKey)
+	suite.Equal(int64(-1), millis)
+	suite.NoError(err)
+
+	millis, err = suite.engine.PTTL(doesNotExistKey)
+	suite.Equal(int64(-2), millis)
+	suite.NoError(err)
+}
+
+func (suite *engineTestSuite) TestInternalExpireAt() {
+	futureTime := time.Now().Add(24 * time.Hour)
+	truefalse := suite.engine.expireAt(stringValueKey, futureTime)
+	suite.True(truefalse)
+	suite.NotNil(suite.engine.getStore(stringValueKey))
+
+	pastTime := time.Now().Add(-24 * time.Hour)
+	truefalse = suite.engine.expireAt(intValueKey, pastTime)
+	suite.False(truefalse)
+	suite.Nil(suite.engine.getStore(intValueKey))
+
+	truefalse = suite.engine.expireAt(doesNotExistKey, futureTime)
+	suite.False(truefalse)
+	suite.Nil(suite.engine.getStore(doesNotExistKey))
+}
+
+func (suite *engineTestSuite) TestGetStoreExpires() {
+	store := suite.engine.getStore(stringValueKey)
+	futureTime := time.Now().Add(24 * time.Hour)
+	store.expire(&futureTime)
+
+	checkStore := suite.engine.getStore(stringValueKey)
+	suite.NotNil(checkStore)
+
+	pastTime := time.Now().Add(-24 * time.Hour)
+	store.expire(&pastTime)
+
+	checkStore = suite.engine.getStore(stringValueKey)
+	suite.Nil(checkStore)
+
+	exists, err := suite.engine.Exists([]string{stringValueKey})
+	suite.Equal(int64(0), exists)
+	suite.NoError(err)
 }
 
 func TestEngineTestSuite(t *testing.T) {
