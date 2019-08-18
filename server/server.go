@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -120,11 +121,17 @@ func (s *redishServer) Mget(ctx context.Context, keys *pb.KeyList) (*pb.ValueLis
 	for i, key := range keys.Keys {
 		keyStrings[i] = key.Key
 	}
+
 	values, err := s.engine.MGet(keyStrings)
 	if err != nil {
 		return nil, err
 	}
-	singleValues := make([]*pb.SingleValue, len(keys.Keys))
+
+	if len(values) != len(keys.Keys) {
+		return nil, fmt.Errorf("engine returned the wrong number of values (%v) for the number of keys (%v)", len(values), len(keys.Keys))
+	}
+
+	singleValues := make([]*pb.SingleValue, len(values))
 	for i, value := range values {
 		if value != nil {
 			singleValues[i] = &pb.SingleValue{Value: &wrappers.StringValue{Value: *value}}

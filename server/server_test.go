@@ -171,6 +171,77 @@ func (suite *serverTestSuite) TestDecrby() {
 	suite.engine.AssertExpectations(suite.T())
 }
 
+func (suite *serverTestSuite) TestStrlen() {
+	suite.engine.On("Strlen", stringValueKey).Return(42, nil)
+	ret, err := suite.server.Strlen(suite.context, &stringValueKeyObject)
+	suite.Equal(int64(42), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("Strlen", fakeValueKey).Return(0, fmt.Errorf("invalid data type"))
+	_, err = suite.server.Strlen(suite.context, &fakeValueKeyObject)
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestGetSet() {
+	suite.engine.On("GetSet", stringValueKey, intValue).Return(&stringValue, nil)
+	ret, err := suite.server.Getset(suite.context, &redish.KeyValue{Key: stringValueKey, Value: intValue})
+	suite.Equal(stringValue, ret.Value.Value)
+	suite.NoError(err)
+
+	suite.engine.On("GetSet", doesNotExistKey, intValue).Return(nil, nil)
+	ret, err = suite.server.Getset(suite.context, &redish.KeyValue{Key: doesNotExistKey, Value: intValue})
+	suite.Nil(ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("GetSet", fakeValueKey, stringValue).Return(nil, fmt.Errorf("data type error"))
+	_, err = suite.server.Getset(suite.context, &redish.KeyValue{Key: fakeValueKey, Value: stringValue})
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestMGet() {
+	suite.engine.On("MGet", []string{stringValueKey, doesNotExistKey, fakeValueKey, intValueKey}).Return([]*string{&stringValue, nil, nil, &intValue}, nil)
+	ret, err := suite.server.Mget(suite.context, &redish.KeyList{Keys: []*redish.Key{&stringValueKeyObject, &doesNotExistKeyObject, &fakeValueKeyObject, &intValueKeyObject}})
+	suite.NoError(err)
+	suite.Equal(stringValue, ret.Values[0].Value.Value)
+	suite.Nil(ret.Values[1].Value)
+	suite.Nil(ret.Values[2].Value)
+	suite.Equal(intValue, ret.Values[3].Value.Value)
+	suite.NoError(err)
+
+	suite.engine.On("MGet", []string{}).Return([]*string{}, nil)
+	ret, err = suite.server.Mget(suite.context, &redish.KeyList{})
+	suite.NoError(err)
+	suite.Equal(0, len(ret.Values))
+
+	suite.engine.On("MGet", []string{fakeValueKey}).Return([]*string{}, fmt.Errorf("this somehow failed"))
+	_, err = suite.server.Mget(suite.context, &redish.KeyList{Keys: []*redish.Key{&fakeValueKeyObject}})
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestMGetNilReturn() {
+	// I don't think this is actually possible, but I want to cover that edge case!
+	// and of course, this broke! this is 100% why you write tests!
+	// and because this is a weird case, what do? Originally I wanted it to not error but just return an empty list, but
+	// I think in this case, since we're talking about integration with an engine, we need to guard against the engine
+	// doing something bad, like returning a number of values that isn't the same as the number of keys, so there should be an error
+	// returned to the client. Boom.
+	suite.engine.On("MGet", []string{intValueKey}).Return(nil, nil)
+	_, err := suite.server.Mget(suite.context, &redish.KeyList{Keys: []*redish.Key{&intValueKeyObject}})
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestMSet() {
+
+}
+
 func TestServerTests(t *testing.T) {
 	suite.Run(t, new(serverTestSuite))
 }

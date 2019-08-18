@@ -55,13 +55,31 @@ func (engine *mockEngine) Decrby(key string, by int64) (int64, error) {
 	return int64(args.Int(0)), args.Error(1)
 }
 
-// Incr(key string) (int64, error)
-// Decr(key string) (int64, error)
-// Incrby(key string, by int64) (int64, error)
-// Decrby(key string, by int64) (int64, error)
-// Strlen(key string) (int64, error)
-// GetSet(key string, value string) (*string, error)
-// MGet(keys []string) ([]*string, error)
+func (engine *mockEngine) Strlen(key string) (int64, error) {
+	args := engine.Called(key)
+	return int64(args.Int(0)), args.Error(1)
+}
+
+func (engine *mockEngine) GetSet(key string, value string) (*string, error) {
+	args := engine.Called(key, value)
+	err := args.Error(1)
+	if ret := args.Get(0); ret != nil {
+		return ret.(*string), err
+	}
+
+	return nil, err
+}
+
+func (engine *mockEngine) MGet(keys []string) ([]*string, error) {
+	args := engine.Called(keys)
+	err := args.Error(1)
+	if ret := args.Get(0); ret != nil {
+		return ret.([]*string), err
+	}
+
+	return nil, err
+}
+
 // MSet(kvs map[string]string) error
 // Type(key string) (string, error)
 // Expire(key string, seconds int64) (bool, error)
