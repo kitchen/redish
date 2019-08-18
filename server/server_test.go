@@ -12,9 +12,11 @@ import (
 var stringValue = "stringValue"
 var stringValueKey = "stringvalue"
 var stringValueKeyObject = redish.Key{Key: stringValueKey}
+var stringKeyValue = redish.KeyValue{Key: stringValueKey, Value: stringValue}
 var intValue = "424242"
 var intValueKey = "intvalue"
 var intValueKeyObject = redish.Key{Key: intValueKey}
+var intKeyValue = redish.KeyValue{Key: intValueKey, Value: intValue}
 var doesNotExistKey = "doesnotexist"
 var doesNotExistKeyObject = redish.Key{Key: doesNotExistKey}
 var fakeValueKey = "fakevalue"
@@ -239,7 +241,179 @@ func (suite *serverTestSuite) TestMGetNilReturn() {
 }
 
 func (suite *serverTestSuite) TestMSet() {
+	// happy case
+	suite.engine.On("MSet", map[string]string{stringValueKey: stringValue, intValueKey: intValue}).Return(nil)
+	ok, err := suite.server.Mset(suite.context, &redish.KeyValueList{Pairs: []*redish.KeyValue{&stringKeyValue, &intKeyValue}})
+	suite.Equal(&redish.OK{}, ok)
+	suite.NoError(err)
 
+	// duplicate key
+	stringIntKeyValue := redish.KeyValue{Key: stringValueKey, Value: intValue}
+	suite.engine.On("MSet", map[string]string{stringValueKey: intValue, intValueKey: intValue}).Return(nil)
+	ok, err = suite.server.Mset(suite.context, &redish.KeyValueList{Pairs: []*redish.KeyValue{&stringKeyValue, &intKeyValue, &stringIntKeyValue}})
+	suite.Equal(&redish.OK{}, ok)
+	suite.NoError(err)
+
+	// engine failure
+	suite.engine.On("MSet", map[string]string{stringValueKey: intValue}).Return(fmt.Errorf("this somehow failed"))
+	_, err = suite.server.Mset(suite.context, &redish.KeyValueList{Pairs: []*redish.KeyValue{&stringIntKeyValue}})
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestType() {
+	suite.engine.On("Type", stringValueKey).Return("string", nil)
+	ret, err := suite.server.Type(suite.context, &stringValueKeyObject)
+	suite.NoError(err)
+	suite.Equal("string", ret.Value.Value)
+
+	suite.engine.On("Type", fakeValueKey).Return("fake", fmt.Errorf("this somehow failed"))
+	_, err = suite.server.Type(suite.context, &fakeValueKeyObject)
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestExpire() {
+	suite.engine.On("Expire", stringValueKey, int64(42)).Return(true, nil)
+	ret, err := suite.server.Expire(suite.context, &redish.KeyIntValue{Key: stringValueKey, Value: int64(42)})
+	suite.Equal(int64(1), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("Expire", intValueKey, int64(42)).Return(false, nil)
+	ret, err = suite.server.Expire(suite.context, &redish.KeyIntValue{Key: intValueKey, Value: int64(42)})
+	suite.Equal(int64(0), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("Expire", fakeValueKey, int64(42)).Return(false, fmt.Errorf("this somehow failed"))
+	_, err = suite.server.Expire(suite.context, &redish.KeyIntValue{Key: fakeValueKey, Value: int64(42)})
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestPExpire() {
+	suite.engine.On("PExpire", stringValueKey, int64(42)).Return(true, nil)
+	ret, err := suite.server.Pexpire(suite.context, &redish.KeyIntValue{Key: stringValueKey, Value: int64(42)})
+	suite.Equal(int64(1), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("PExpire", intValueKey, int64(42)).Return(false, nil)
+	ret, err = suite.server.Pexpire(suite.context, &redish.KeyIntValue{Key: intValueKey, Value: int64(42)})
+	suite.Equal(int64(0), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("PExpire", fakeValueKey, int64(42)).Return(false, fmt.Errorf("this somehow failed"))
+	_, err = suite.server.Pexpire(suite.context, &redish.KeyIntValue{Key: fakeValueKey, Value: int64(42)})
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestExpireAt() {
+	suite.engine.On("ExpireAt", stringValueKey, int64(42)).Return(true, nil)
+	ret, err := suite.server.Expireat(suite.context, &redish.KeyIntValue{Key: stringValueKey, Value: int64(42)})
+	suite.Equal(int64(1), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("ExpireAt", intValueKey, int64(42)).Return(false, nil)
+	ret, err = suite.server.Expireat(suite.context, &redish.KeyIntValue{Key: intValueKey, Value: int64(42)})
+	suite.Equal(int64(0), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("ExpireAt", fakeValueKey, int64(42)).Return(false, fmt.Errorf("this somehow failed"))
+	_, err = suite.server.Expireat(suite.context, &redish.KeyIntValue{Key: fakeValueKey, Value: int64(42)})
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestPExpireAt() {
+	suite.engine.On("PExpireAt", stringValueKey, int64(42)).Return(true, nil)
+	ret, err := suite.server.Pexpireat(suite.context, &redish.KeyIntValue{Key: stringValueKey, Value: int64(42)})
+	suite.Equal(int64(1), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("PExpireAt", intValueKey, int64(42)).Return(false, nil)
+	ret, err = suite.server.Pexpireat(suite.context, &redish.KeyIntValue{Key: intValueKey, Value: int64(42)})
+	suite.Equal(int64(0), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("PExpireAt", fakeValueKey, int64(42)).Return(false, fmt.Errorf("this somehow failed"))
+	_, err = suite.server.Pexpireat(suite.context, &redish.KeyIntValue{Key: fakeValueKey, Value: int64(42)})
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestPersist() {
+	suite.engine.On("Persist", stringValueKey).Return(true, nil)
+	ret, err := suite.server.Persist(suite.context, &stringValueKeyObject)
+	suite.Equal(int64(1), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("Persist", intValueKey).Return(false, nil)
+	ret, err = suite.server.Persist(suite.context, &intValueKeyObject)
+	suite.Equal(int64(0), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("Persist", doesNotExistKey).Return(false, nil)
+	ret, err = suite.server.Persist(suite.context, &doesNotExistKeyObject)
+	suite.Equal(int64(0), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("Persist", fakeValueKey).Return(false, fmt.Errorf("this somehow failed"))
+	_, err = suite.server.Persist(suite.context, &fakeValueKeyObject)
+	suite.NoError(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestTTL() {
+	suite.engine.On("TTL", stringValueKey).Return(42, nil)
+	ret, err := suite.server.Ttl(suite.context, &stringValueKeyObject)
+	suite.Equal(int64(42), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("TTL", intValueKey).Return(-1, nil)
+	ret, err = suite.server.Ttl(suite.context, &intValueKeyObject)
+	suite.Equal(int64(-1), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("TTL", doesNotExistKey).Return(-2, nil)
+	ret, err = suite.server.Ttl(suite.context, &doesNotExistKeyObject)
+	suite.Equal(int64(-2), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("TTL", fakeValueKey).Return(0, fmt.Errorf("this somehow failed"))
+	_, err = suite.server.Ttl(suite.context, &fakeValueKeyObject)
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestPTTL() {
+	suite.engine.On("PTTL", stringValueKey).Return(42, nil)
+	ret, err := suite.server.Pttl(suite.context, &stringValueKeyObject)
+	suite.Equal(int64(42), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("PTTL", intValueKey).Return(-1, nil)
+	ret, err = suite.server.Pttl(suite.context, &intValueKeyObject)
+	suite.Equal(int64(-1), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("PTTL", doesNotExistKey).Return(-2, nil)
+	ret, err = suite.server.Pttl(suite.context, &doesNotExistKeyObject)
+	suite.Equal(int64(-2), ret.Value)
+	suite.NoError(err)
+
+	suite.engine.On("PTTL", fakeValueKey).Return(0, fmt.Errorf("this somehow failed"))
+	_, err = suite.server.Pttl(suite.context, &fakeValueKeyObject)
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
 }
 
 func TestServerTests(t *testing.T) {

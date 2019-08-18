@@ -80,14 +80,47 @@ func (engine *mockEngine) MGet(keys []string) ([]*string, error) {
 	return nil, err
 }
 
-// MSet(kvs map[string]string) error
-// Type(key string) (string, error)
-// Expire(key string, seconds int64) (bool, error)
-// PExpire(key string, millis int64) (bool, error)
-// // seconds since epoch
-// ExpireAt(key string, seconds int64) (bool, error)
-// // millis since epoch
-// PExpireAt(key string, millis int64) (bool, error)
-// Persist(key string) (bool, error)
-// TTL(key string) (int64, error)
-// PTTL(key string) (int64, error)
+func (engine *mockEngine) MSet(kvs map[string]string) error {
+	args := engine.Called(kvs)
+	return args.Error(0)
+}
+
+func (engine *mockEngine) Type(key string) (string, error) {
+	args := engine.Called(key)
+	return args.String(0), args.Error(1)
+}
+
+func (engine *mockEngine) Expire(key string, seconds int64) (bool, error) {
+	args := engine.Called(key, seconds)
+	return args.Bool(0), args.Error(1)
+}
+
+func (engine *mockEngine) PExpire(key string, millis int64) (bool, error) {
+	args := engine.Called(key, millis)
+	return args.Bool(0), args.Error(1)
+}
+
+func (engine *mockEngine) ExpireAt(key string, seconds int64) (bool, error) {
+	args := engine.Called(key, seconds)
+	return args.Bool(0), args.Error(1)
+}
+
+func (engine *mockEngine) PExpireAt(key string, millis int64) (bool, error) {
+	args := engine.Called(key, millis)
+	return args.Bool(0), args.Error(1)
+}
+
+func (engine *mockEngine) Persist(key string) (bool, error) {
+	args := engine.Called(key)
+	return args.Bool(0), args.Error(1)
+}
+
+func (engine *mockEngine) TTL(key string) (int64, error) {
+	args := engine.Called(key)
+	return int64(args.Int(0)), args.Error(1)
+}
+
+func (engine *mockEngine) PTTL(key string) (int64, error) {
+	args := engine.Called(key)
+	return int64(args.Int(0)), args.Error(1)
+}
