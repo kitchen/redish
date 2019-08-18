@@ -13,6 +13,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import wrappers_pb2 as google_dot_protobuf_dot_wrappers__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,8 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='redish',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0credish.proto\x12\x06redish\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\t\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"$\n\x07KeyList\x12\x19\n\x04keys\x18\x01 \x03(\x0b\x32\x0b.redish.Key\"/\n\x0cKeyValueList\x12\x1f\n\x05pairs\x18\x01 \x03(\x0b\x32\x10.redish.KeyValue\"\x1c\n\x0bSingleValue\x12\r\n\x05value\x18\x01 \x01(\t\"\x19\n\x08IntValue\x12\r\n\x05value\x18\x01 \x01(\x12\")\n\x0bKeyIntValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x12\"0\n\tValueList\x12#\n\x06values\x18\x01 \x03(\x0b\x32\x13.redish.SingleValue\"(\n\nSetRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x04\n\x02OK2\xa3\x07\n\x06Redish\x12)\n\x03get\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\'\n\x03set\x12\x12.redish.SetRequest\x1a\n.redish.OK\"\x00\x12+\n\x04\x64\x65le\x12\x0f.redish.KeyList\x1a\x10.redish.IntValue\"\x00\x12-\n\x06\x65xists\x12\x0f.redish.KeyList\x1a\x10.redish.IntValue\"\x00\x12\'\n\x04incr\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x12\'\n\x04\x64\x65\x63r\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x12\x31\n\x06incrby\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12\x31\n\x06\x64\x65\x63rby\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12)\n\x06strlen\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x12\x31\n\x06getset\x12\x10.redish.KeyValue\x1a\x13.redish.SingleValue\"\x00\x12,\n\x04mget\x12\x0f.redish.KeyList\x1a\x11.redish.ValueList\"\x00\x12*\n\x04mset\x12\x14.redish.KeyValueList\x1a\n.redish.OK\"\x00\x12*\n\x04type\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\x31\n\x06\x65xpire\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12\x32\n\x07pexpire\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12\x33\n\x08\x65xpireat\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12\x34\n\tpexpireat\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12*\n\x07persist\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x12&\n\x03ttl\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x12\'\n\x04pttl\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x62\x06proto3')
-)
+  serialized_pb=_b('\n\x0credish.proto\x12\x06redish\x1a\x1egoogle/protobuf/wrappers.proto\"\x12\n\x03Key\x12\x0b\n\x03key\x18\x01 \x01(\t\"&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"$\n\x07KeyList\x12\x19\n\x04keys\x18\x01 \x03(\x0b\x32\x0b.redish.Key\"/\n\x0cKeyValueList\x12\x1f\n\x05pairs\x18\x01 \x03(\x0b\x32\x10.redish.KeyValue\":\n\x0bSingleValue\x12+\n\x05value\x18\x01 \x01(\x0b\x32\x1c.google.protobuf.StringValue\"\x19\n\x08IntValue\x12\r\n\x05value\x18\x01 \x01(\x12\")\n\x0bKeyIntValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x12\"0\n\tValueList\x12#\n\x06values\x18\x01 \x03(\x0b\x32\x13.redish.SingleValue\"(\n\nSetRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x04\n\x02OK2\xa3\x07\n\x06Redish\x12)\n\x03get\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\'\n\x03set\x12\x12.redish.SetRequest\x1a\n.redish.OK\"\x00\x12+\n\x04\x64\x65le\x12\x0f.redish.KeyList\x1a\x10.redish.IntValue\"\x00\x12-\n\x06\x65xists\x12\x0f.redish.KeyList\x1a\x10.redish.IntValue\"\x00\x12\'\n\x04incr\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x12\'\n\x04\x64\x65\x63r\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x12\x31\n\x06incrby\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12\x31\n\x06\x64\x65\x63rby\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12)\n\x06strlen\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x12\x31\n\x06getset\x12\x10.redish.KeyValue\x1a\x13.redish.SingleValue\"\x00\x12,\n\x04mget\x12\x0f.redish.KeyList\x1a\x11.redish.ValueList\"\x00\x12*\n\x04mset\x12\x14.redish.KeyValueList\x1a\n.redish.OK\"\x00\x12*\n\x04type\x12\x0b.redish.Key\x1a\x13.redish.SingleValue\"\x00\x12\x31\n\x06\x65xpire\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12\x32\n\x07pexpire\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12\x33\n\x08\x65xpireat\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12\x34\n\tpexpireat\x12\x13.redish.KeyIntValue\x1a\x10.redish.IntValue\"\x00\x12*\n\x07persist\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x12&\n\x03ttl\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x12\'\n\x04pttl\x12\x0b.redish.Key\x1a\x10.redish.IntValue\"\x00\x62\x06proto3')
+  ,
+  dependencies=[google_dot_protobuf_dot_wrappers__pb2.DESCRIPTOR,])
 
 
 
@@ -52,8 +54,8 @@ _KEY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=24,
-  serialized_end=42,
+  serialized_start=56,
+  serialized_end=74,
 )
 
 
@@ -90,8 +92,8 @@ _KEYVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=44,
-  serialized_end=82,
+  serialized_start=76,
+  serialized_end=114,
 )
 
 
@@ -121,8 +123,8 @@ _KEYLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=84,
-  serialized_end=120,
+  serialized_start=116,
+  serialized_end=152,
 )
 
 
@@ -152,8 +154,8 @@ _KEYVALUELIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=122,
-  serialized_end=169,
+  serialized_start=154,
+  serialized_end=201,
 )
 
 
@@ -166,8 +168,8 @@ _SINGLEVALUE = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='value', full_name='redish.SingleValue.value', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -183,8 +185,8 @@ _SINGLEVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=171,
-  serialized_end=199,
+  serialized_start=203,
+  serialized_end=261,
 )
 
 
@@ -214,8 +216,8 @@ _INTVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=201,
-  serialized_end=226,
+  serialized_start=263,
+  serialized_end=288,
 )
 
 
@@ -252,8 +254,8 @@ _KEYINTVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=228,
-  serialized_end=269,
+  serialized_start=290,
+  serialized_end=331,
 )
 
 
@@ -283,8 +285,8 @@ _VALUELIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=271,
-  serialized_end=319,
+  serialized_start=333,
+  serialized_end=381,
 )
 
 
@@ -321,8 +323,8 @@ _SETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=321,
-  serialized_end=361,
+  serialized_start=383,
+  serialized_end=423,
 )
 
 
@@ -345,12 +347,13 @@ _OK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=363,
-  serialized_end=367,
+  serialized_start=425,
+  serialized_end=429,
 )
 
 _KEYLIST.fields_by_name['keys'].message_type = _KEY
 _KEYVALUELIST.fields_by_name['pairs'].message_type = _KEYVALUE
+_SINGLEVALUE.fields_by_name['value'].message_type = google_dot_protobuf_dot_wrappers__pb2._STRINGVALUE
 _VALUELIST.fields_by_name['values'].message_type = _SINGLEVALUE
 DESCRIPTOR.message_types_by_name['Key'] = _KEY
 DESCRIPTOR.message_types_by_name['KeyValue'] = _KEYVALUE
@@ -442,8 +445,8 @@ _REDISH = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=370,
-  serialized_end=1301,
+  serialized_start=432,
+  serialized_end=1363,
   methods=[
   _descriptor.MethodDescriptor(
     name='get',

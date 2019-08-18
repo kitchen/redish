@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/kitchen/redish/engine"
 	pb "github.com/kitchen/redish/redish"
 )
@@ -13,8 +14,8 @@ type redishServer struct {
 	pb.UnimplementedRedishServer
 }
 
-func newServer() *redishServer {
-	s := &redishServer{engine: engine.NewEngine()}
+func newServer(engine engine.Engine) *redishServer {
+	s := &redishServer{engine: engine}
 	return s
 }
 
@@ -26,7 +27,7 @@ func (s *redishServer) Get(ctx context.Context, key *pb.Key) (*pb.SingleValue, e
 	}
 
 	if value != nil {
-		return &pb.SingleValue{Value: *value}, nil
+		return &pb.SingleValue{Value: &wrappers.StringValue{Value: *value}}, nil
 	}
 	return &pb.SingleValue{}, nil
 }
@@ -107,7 +108,7 @@ func (s *redishServer) Strlen(ctx context.Context, key *pb.Key) (*pb.IntValue, e
 func (s *redishServer) Getset(ctx context.Context, keyvalue *pb.KeyValue) (*pb.SingleValue, error) {
 	log.Printf("GETSET %v %v", keyvalue.Key, keyvalue.Value)
 	if value, err := s.engine.GetSet(keyvalue.Key, keyvalue.Value); value != nil {
-		return &pb.SingleValue{Value: *value}, err
+		return &pb.SingleValue{Value: &wrappers.StringValue{Value: *value}}, err
 	} else {
 		return &pb.SingleValue{}, err
 	}
@@ -126,7 +127,7 @@ func (s *redishServer) Mget(ctx context.Context, keys *pb.KeyList) (*pb.ValueLis
 	singleValues := make([]*pb.SingleValue, len(keys.Keys))
 	for i, value := range values {
 		if value != nil {
-			singleValues[i] = &pb.SingleValue{Value: *value}
+			singleValues[i] = &pb.SingleValue{Value: &wrappers.StringValue{Value: *value}}
 		} else {
 			singleValues[i] = &pb.SingleValue{}
 		}
@@ -146,48 +147,67 @@ func (s *redishServer) Mset(ctx context.Context, keyvaluelist *pb.KeyValueList) 
 
 func (s *redishServer) Type(ctx context.Context, key *pb.Key) (*pb.SingleValue, error) {
 	typeString, err := s.engine.Type(key.Key)
-	return &pb.SingleValue{Value: typeString}, err
+	return &pb.SingleValue{Value: &wrappers.StringValue{Value: typeString}}, err
 }
 
-
 func (s *redishServer) Expire(ctx context.Context, keyintvalue *pb.KeyIntValue) (*pb.IntValue, error) {
-  log.Printf("EXPIRE %v %v", keyintvalue.Key, keyintvalue.Value)
-  ret, err := s.engine.Expire(keyintvalue.Key, keyintvalue.Value)
-  return &pb.IntValue{Value: TODO: ternary operator}, err
+	log.Printf("EXPIRE %v %v", keyintvalue.Key, keyintvalue.Value)
+	ret, err := s.engine.Expire(keyintvalue.Key, keyintvalue.Value)
+	if ret {
+		return &pb.IntValue{Value: 1}, err
+	} else {
+		return &pb.IntValue{Value: 0}, err
+	}
 }
 
 func (s *redishServer) Pexpire(ctx context.Context, keyintvalue *pb.KeyIntValue) (*pb.IntValue, error) {
-  log.Printf("PEXPIRE %v %v", keyintvalue.Key, keyintvalue.Value)
-  ret, err := s.engine.PExpire(keyintvalue.Key, keyintvalue.Value)
-  return &pb.IntValue{Value: TODO: ternary operator}, err
+	log.Printf("PEXPIRE %v %v", keyintvalue.Key, keyintvalue.Value)
+	ret, err := s.engine.PExpire(keyintvalue.Key, keyintvalue.Value)
+	if ret {
+		return &pb.IntValue{Value: 1}, err
+	} else {
+		return &pb.IntValue{Value: 0}, err
+	}
 }
 
 func (s *redishServer) Expireat(ctx context.Context, keyintvalue *pb.KeyIntValue) (*pb.IntValue, error) {
-  log.Printf("EXPIREAT %v %v", keyintvalue.Key, keyintvalue.Value)
-  ret, err := s.engine.ExpireAt(keyintvalue.Key, keyintvalue.Value)
-  return &pb.IntValue{Value: TODO: ternary operator}, err
+	log.Printf("EXPIREAT %v %v", keyintvalue.Key, keyintvalue.Value)
+	ret, err := s.engine.ExpireAt(keyintvalue.Key, keyintvalue.Value)
+	if ret {
+		return &pb.IntValue{Value: 1}, err
+	} else {
+		return &pb.IntValue{Value: 0}, err
+	}
 }
 
 func (s *redishServer) Pexpireat(ctx context.Context, keyintvalue *pb.KeyIntValue) (*pb.IntValue, error) {
-  log.Printf("PEXPIREAT %v %v", keyintvalue.Key, keyintvalue.Value)
-  ret, err := s.engine.PExpireAt(keyintvalue.Key, keyintvalue.Value)
-  return &pb.IntValue{Value: TODO: ternary operator}, err
+	log.Printf("PEXPIREAT %v %v", keyintvalue.Key, keyintvalue.Value)
+	ret, err := s.engine.PExpireAt(keyintvalue.Key, keyintvalue.Value)
+	if ret {
+		return &pb.IntValue{Value: 1}, err
+	} else {
+		return &pb.IntValue{Value: 0}, err
+	}
 }
 
 func (s *redishServer) Persist(ctx context.Context, key *pb.Key) (*pb.IntValue, error) {
-  log.Printf("PERSIST %v", key.Key)
-  ret, err := s.engine.Persist(key.Key)
-  return &pb.IntValue{Value: TODO: ternary operator}, err
+	log.Printf("PERSIST %v", key.Key)
+	ret, err := s.engine.Persist(key.Key)
+	if ret {
+		return &pb.IntValue{Value: 1}, err
+	} else {
+		return &pb.IntValue{Value: 0}, err
+	}
 }
 
 func (s *redishServer) Ttl(ctx context.Context, key *pb.Key) (*pb.IntValue, error) {
-  log.Printf("TTL %v", key.Key)
-  ret, err := s.engine.TTL(key.Key)
-  return &pb.IntValue{Value: ret}, err
+	log.Printf("TTL %v", key.Key)
+	ret, err := s.engine.TTL(key.Key)
+	return &pb.IntValue{Value: ret}, err
 }
 
-func (s *redishServer) Ttl(ctx context.Context, key *pb.Key) (*pb.IntValue, error) {
-  log.Printf("PTTL %v", key.Key)
-  ret, err := s.engine.PTTL(key.Key)
-  return &pb.IntValue{Value: ret}, err
+func (s *redishServer) Pttl(ctx context.Context, key *pb.Key) (*pb.IntValue, error) {
+	log.Printf("PTTL %v", key.Key)
+	ret, err := s.engine.PTTL(key.Key)
+	return &pb.IntValue{Value: ret}, err
 }

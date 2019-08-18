@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package redish;
 
+import "google/protobuf/wrappers.proto";
+
+
 service Redish {
   // https://redis.io/commands
   rpc get (Key) returns (SingleValue) {}
@@ -45,7 +48,7 @@ message KeyValueList {
 }
 
 message SingleValue {
-  string value = 1;
+  google.protobuf.StringValue value = 1;
 }
 
 message IntValue {
