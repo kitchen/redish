@@ -226,7 +226,7 @@ func (suite *serverTestSuite) TestMGet() {
 	suite.engine.AssertExpectations(suite.T())
 }
 
-func (suite *serverTestSuite) TestMGetNilReturn() {
+func (suite *serverTestSuite) TestMGetEngineReturnsNil() {
 	// I don't think this is actually possible, but I want to cover that edge case!
 	// and of course, this broke! this is 100% why you write tests!
 	// and because this is a weird case, what do? Originally I wanted it to not error but just return an empty list, but
@@ -234,6 +234,14 @@ func (suite *serverTestSuite) TestMGetNilReturn() {
 	// doing something bad, like returning a number of values that isn't the same as the number of keys, so there should be an error
 	// returned to the client. Boom.
 	suite.engine.On("MGet", []string{intValueKey}).Return(nil, nil)
+	_, err := suite.server.Mget(suite.context, &redish.KeyList{Keys: []*redish.Key{&intValueKeyObject}})
+	suite.Error(err)
+
+	suite.engine.AssertExpectations(suite.T())
+}
+
+func (suite *serverTestSuite) TestMGetMismatchedCounts() {
+	suite.engine.On("MGet", []string{intValueKey}).Return([]*string{&intValue, &stringValue}, nil)
 	_, err := suite.server.Mget(suite.context, &redish.KeyList{Keys: []*redish.Key{&intValueKeyObject}})
 	suite.Error(err)
 
