@@ -365,7 +365,7 @@ func (suite *serverTestSuite) TestPersist() {
 
 	suite.engine.On("Persist", fakeValueKey).Return(false, fmt.Errorf("this somehow failed"))
 	_, err = suite.server.Persist(suite.context, &fakeValueKeyObject)
-	suite.NoError(err)
+	suite.Error(err)
 
 	suite.engine.AssertExpectations(suite.T())
 }
