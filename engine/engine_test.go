@@ -9,8 +9,7 @@ import (
 
 const stringValue = "foobartestvaluehtnsaoeu"
 const stringValueKey = "stringvaluekey"
-const intValue = 12345678901
-const intValueString = "12345678901"
+const intValueString = "1234567890"
 const intValueKey = "intvaluekey"
 const fakeValueKey = "fakevaluekey"
 const doesNotExistKey = "doesnotexistkey"

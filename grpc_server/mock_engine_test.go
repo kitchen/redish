@@ -1,4 +1,4 @@
-package main
+package grpc_server
 
 import (
 	"github.com/kitchen/redish/engine"

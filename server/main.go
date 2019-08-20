@@ -5,6 +5,7 @@ import (
 	"net"
 
 	"github.com/kitchen/redish/engine"
+	"github.com/kitchen/redish/grpc_server"
 	pb "github.com/kitchen/redish/redish"
 	"google.golang.org/grpc"
 )
@@ -12,7 +13,7 @@ import (
 func main() {
 	grpcServer := grpc.NewServer()
 	engine := engine.NewEngine()
-	srv := newServer(engine)
+	srv := grpc_server.NewServer(engine)
 	pb.RegisterRedishServer(grpcServer, srv)
 	lis, err := net.Listen("tcp", "localhost:4242")
 	if err != nil {

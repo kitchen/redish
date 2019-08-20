@@ -1,4 +1,4 @@
-package main
+package grpc_server
 
 import (
 	"context"
@@ -31,7 +31,7 @@ type serverTestSuite struct {
 
 func (suite *serverTestSuite) SetupTest() {
 	suite.engine = &mockEngine{}
-	suite.server = newServer(suite.engine)
+	suite.server = NewServer(suite.engine)
 	ctx := context.TODO()
 	suite.context = ctx
 }

@@ -1,4 +1,4 @@
-package main
+package grpc_server
 
 import (
 	"context"
@@ -15,7 +15,7 @@ type redishServer struct {
 	pb.UnimplementedRedishServer
 }
 
-func newServer(engine engine.Engine) *redishServer {
+func NewServer(engine engine.Engine) *redishServer {
 	s := &redishServer{engine: engine}
 	return s
 }
