@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -48,8 +49,12 @@ func (engine *engine) Get(key string) (*string, error) {
 	if store == nil {
 		return nil, nil
 	}
-	value, err := store.get()
-	return &value, err
+
+	if store, ok := store.(stringishValueStoreInterface); ok {
+		value := store.get()
+		return &value, nil
+	}
+	return nil, fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 }
 
 func (engine *engine) getStore(key string) valueStoreInterface {
@@ -120,22 +125,34 @@ func (engine *engine) Exists(keys []string) (int64, error) {
 func (engine *engine) Incr(key string) (int64, error) {
 	store := engine.getOrDefault(key, "0")
 
-	return store.incrby(1)
+	if store, ok := store.(stringishValueStoreInterface); ok {
+		return store.incrby(1)
+	}
+	return 0, fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 }
 
 func (engine *engine) Decr(key string) (int64, error) {
 	store := engine.getOrDefault(key, "0")
-	return store.incrby(-1)
+	if store, ok := store.(stringishValueStoreInterface); ok {
+		return store.incrby(-1)
+	}
+	return 0, fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 }
 
 func (engine *engine) Incrby(key string, by int64) (int64, error) {
 	store := engine.getOrDefault(key, "0")
-	return store.incrby(by)
+	if store, ok := store.(stringishValueStoreInterface); ok {
+		return store.incrby(by)
+	}
+	return 0, fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 }
 
 func (engine *engine) Decrby(key string, by int64) (int64, error) {
 	store := engine.getOrDefault(key, "0")
-	return store.incrby(-by)
+	if store, ok := store.(stringishValueStoreInterface); ok {
+		return store.incrby(-by)
+	}
+	return 0, fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 }
 
 func (engine *engine) Strlen(key string) (int64, error) {
@@ -144,11 +161,10 @@ func (engine *engine) Strlen(key string) (int64, error) {
 		return 0, nil
 	}
 
-	value, err := store.get()
-	if err == nil {
-		return int64(len(value)), nil
+	if castStore, ok := store.(stringishValueStoreInterface); ok {
+		return castStore.len(), nil
 	}
-	return 0, err
+	return 0, fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 }
 
 func (engine *engine) GetSet(key string, newValue string) (*string, error) {
@@ -157,11 +173,11 @@ func (engine *engine) GetSet(key string, newValue string) (*string, error) {
 	if store == nil {
 		oldValue = nil
 	} else {
-		value, err := store.get()
-		if err != nil {
-			return nil, err
+		if store, ok := store.(stringishValueStoreInterface); ok {
+			tmpValue := store.get()
+			oldValue = &tmpValue
 		}
-		oldValue = &value
+		return nil, fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 	}
 	engine.set(key, newValue)
 	return oldValue, nil
@@ -171,7 +187,8 @@ func (engine *engine) MGet(keys []string) ([]*string, error) {
 	values := make([]*string, len(keys))
 	for i, key := range keys {
 		if store := engine.getStore(key); store != nil {
-			if value, err := store.get(); err == nil {
+			if store, ok := store.(stringishValueStoreInterface); ok {
+				value := store.get()
 				values[i] = &value
 			} else {
 				values[i] = nil

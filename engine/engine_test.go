@@ -281,23 +281,26 @@ func (suite *engineTestSuite) TestType() {
 
 func (suite *engineTestSuite) TestGetOrDefault() {
 	store := suite.engine.getOrDefault(stringValueKey, "default")
-	value, err := store.get()
-	suite.NoError(err)
-	suite.Equal(stringValue, value)
+	suite.Implements(store, (*stringishValueStoreInterface)(nil))
+	if store, ok := store.(stringishValueStoreInterface); ok {
+		suite.Equal(stringValue, store.get())
+	}
 
 	store = suite.engine.getOrDefault(doesNotExistKey, "abc")
-	value, err = store.get()
-	suite.NoError(err)
-	suite.Equal("abc", value)
+	suite.Implements(store, (*stringishValueStoreInterface)(nil))
+	if store, ok := store.(stringishValueStoreInterface); ok {
+		suite.Equal("abc", store.get())
+	}
 }
 
 func (suite *engineTestSuite) TestGetStore() {
 	store := suite.engine.getStore(stringValueKey)
 	suite.NotNil(store)
 
-	value, err := store.get()
-	suite.NoError(err)
-	suite.Equal(stringValue, value)
+	suite.Implements(store, (*stringishValueStoreInterface)(nil))
+	if store, ok := store.(stringishValueStoreInterface); ok {
+		suite.Equal(stringValue, store.get())
+	}
 
 	store = suite.engine.getStore(doesNotExistKey)
 	suite.Nil(store)

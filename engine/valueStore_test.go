@@ -25,14 +25,6 @@ func (suite *valueStoreTestSuite) SetupTest() {
 	suite.store = fakeValueStore{}
 }
 
-func (suite *valueStoreTestSuite) TestDefaultFailures() {
-	_, err := suite.store.get()
-	suite.Error(err)
-
-	_, err = suite.store.incrby(1)
-	suite.Error(err)
-}
-
 func (suite *valueStoreTestSuite) TestInterface() {
 	var store valueStoreInterface
 	store = &fakeValueStore{}

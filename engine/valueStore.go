@@ -10,16 +10,16 @@ type valueStore struct {
 }
 
 type valueStoreInterface interface {
-	get() (string, error)
-	incrby(by int64) (int64, error)
 	getType() string // to be implemented by "subclasses"
 	expire(at *time.Time)
 	expires() *time.Time
 	expired() bool
 }
 
-func (s *valueStore) get() (string, error) {
-	return "", fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value") // thanks, redis ;-)
+type stringishValueStoreInterface interface {
+	get() string
+	incrby(by int64) (int64, error)
+	len() int64
 }
 
 func (s *valueStore) incrby(by int64) (int64, error) {
@@ -32,6 +32,10 @@ func (s *valueStore) expire(at *time.Time) {
 
 func (s *valueStore) expires() *time.Time {
 	return s.expiresAt
+}
+
+func (s *valueStore) len() (int64, error) {
+	return int64(0), fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 }
 
 func (s *valueStore) expired() bool {
