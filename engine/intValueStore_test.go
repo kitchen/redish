@@ -23,9 +23,8 @@ func (suite *intValueStoreTestSuite) SetupTest() {
 func (suite *intValueStoreTestSuite) TestGet() {
 	suite.Equal(suite.intValue, suite.store.intValue)
 
-	value, err := suite.store.get()
+	value := suite.store.get()
 	suite.Equal(suite.stringValue, value)
-	suite.NoError(err)
 }
 
 func (suite *intValueStoreTestSuite) TestGetType() {
@@ -42,6 +41,14 @@ func (suite *intValueStoreTestSuite) TestIncrBy() {
 	newValue, err = suite.store.incrby(-20)
 	suite.Equal(newExpectedValue, newValue)
 	suite.NoError(err)
+}
+
+func (suite *intValueStoreTestSuite) TestImplements() {
+	var baseInterface *valueStoreInterface
+	suite.Implements(baseInterface, &suite.store)
+
+	var stringishInterface *stringishValueStoreInterface
+	suite.Implements(stringishInterface, &suite.store)
 }
 
 func TestIntValueStore(t *testing.T) {

@@ -82,6 +82,8 @@ func (suite *engineTestSuite) TestGetSetMethod() {
 	suite.NoError(err)
 	suite.Equal(intValueString, *value)
 
+  // log.Printf("contents of int value store: ")
+
 	value, err = suite.engine.Get(intValueKey)
 	suite.NoError(err)
 	suite.Equal("9876", *value)
@@ -280,16 +282,25 @@ func (suite *engineTestSuite) TestType() {
 }
 
 func (suite *engineTestSuite) TestGetOrDefault() {
+	var inter *stringishValueStoreInterface
 	store := suite.engine.getOrDefault(stringValueKey, "default")
-	suite.Implements(store, (*stringishValueStoreInterface)(nil))
+	suite.Implements(inter, store)
 	if store, ok := store.(stringishValueStoreInterface); ok {
 		suite.Equal(stringValue, store.get())
 	}
 
+	store = suite.engine.getOrDefault(intValueKey, "123")
+	suite.Implements(inter, store)
+	if store, ok := store.(stringishValueStoreInterface); ok {
+		suite.Equal(intValueString, store.get())
+	}
+
 	store = suite.engine.getOrDefault(doesNotExistKey, "abc")
-	suite.Implements(store, (*stringishValueStoreInterface)(nil))
+	suite.Implements(inter, store)
 	if store, ok := store.(stringishValueStoreInterface); ok {
 		suite.Equal("abc", store.get())
+	} else {
+		suite.Fail("foo")
 	}
 }
 
@@ -297,7 +308,8 @@ func (suite *engineTestSuite) TestGetStore() {
 	store := suite.engine.getStore(stringValueKey)
 	suite.NotNil(store)
 
-	suite.Implements(store, (*stringishValueStoreInterface)(nil))
+	var inter *stringishValueStoreInterface
+	suite.Implements(inter, store)
 	if store, ok := store.(stringishValueStoreInterface); ok {
 		suite.Equal(stringValue, store.get())
 	}

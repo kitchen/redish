@@ -176,8 +176,9 @@ func (engine *engine) GetSet(key string, newValue string) (*string, error) {
 		if store, ok := store.(stringishValueStoreInterface); ok {
 			tmpValue := store.get()
 			oldValue = &tmpValue
+		} else {
+			return nil, fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 		}
-		return nil, fmt.Errorf("WRONGTYPE Operation against a key holding the wrong kind of value")
 	}
 	engine.set(key, newValue)
 	return oldValue, nil
