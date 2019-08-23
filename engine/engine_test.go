@@ -33,13 +33,12 @@ func (suite *engineTestSuite) SetupTest() {
 }
 
 func (suite *engineTestSuite) TestNewEngine() {
-	var interfaceEngine Engine
-	interfaceEngine = NewEngine()
-	suite.NotNil(interfaceEngine)
+	var interfaceEngine *Engine
+	suite.Implements(interfaceEngine, NewEngine())
 
-	var rawEngine engine
-	rawEngine = *newEngine()
-	suite.NotNil(rawEngine)
+	var engineType engine
+	rawEngine := newEngine()
+	suite.IsType(&engineType, rawEngine)
 }
 
 func (suite *engineTestSuite) TestGetSetStringValues() {
@@ -82,7 +81,7 @@ func (suite *engineTestSuite) TestGetSetMethod() {
 	suite.NoError(err)
 	suite.Equal(intValueString, *value)
 
-  // log.Printf("contents of int value store: ")
+	// log.Printf("contents of int value store: ")
 
 	value, err = suite.engine.Get(intValueKey)
 	suite.NoError(err)
